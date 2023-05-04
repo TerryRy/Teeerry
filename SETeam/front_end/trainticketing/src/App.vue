@@ -1,15 +1,28 @@
 <template>
-  <img alt="Vue logo" src="./assets/logo.png">
-  <HelloWorld msg="Welcome to Your Vue.js App"/>
+  <div><TopLine/></div>
+  <div id="content" v-if="loginstatus"><HomePage/></div>
+  <div id="content" v-else><WelcomePage :loginstatus="loginstatus" @1000="loginstatus = true"/></div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+import TopLine from "@/components/common/TopLine.vue";
+import WelcomePage from "welcome_page/WelcomePage.vue";
 
 export default {
   name: 'App',
   components: {
-    HelloWorld
+    WelcomePage,
+    TopLine
+  },
+  data(){
+    return{
+      loginstatus:false
+    }
+  },
+  methods:{
+    login(){
+      this.loginstatus = true
+    }
   }
 }
 </script>
@@ -22,5 +35,10 @@ export default {
   text-align: center;
   color: #2c3e50;
   margin-top: 60px;
+}
+#content{
+  position: absolute;
+  border-top: 80px;
+  width:100%;
 }
 </style>

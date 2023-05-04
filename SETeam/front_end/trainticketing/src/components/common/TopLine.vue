@@ -1,0 +1,52 @@
+<template>
+  <div id="TopLine">
+  <div id="icon"><img src="~images/icon.png"></div>
+  <div id="name"><p>畅游中国铁路售票官方网站</p></div>
+  <div id="loginstatus"><StatusLogin/></div>
+  </div>
+</template>
+
+<script>
+import StatusLogin from './StatusLogin.vue'
+export default {
+  name: "TopLine",
+  components: {
+    StatusLogin
+  }
+}
+</script>
+
+<style scoped>
+  #TopLine{
+    background-color: whitesmoke;
+    overflow:hidden;
+    display: flex;
+    align-items: center;
+    flex-wrap:wrap;
+    position:absolute;
+    top:0px;
+    width: 100%;
+    height: 80px;
+  }
+  #icon{
+    position: absolute;
+    left:5%;
+  }
+  #icon img{
+    width: 65px;
+  }
+  #name{
+    position: absolute;
+    left: 10%;
+  }
+  #name p{
+    font-size: 26px;
+    font-family: Microsoft YaHei,serif;
+    font-weight: bold;
+    color: black;
+  }
+  #loginstatus{
+    position: absolute;
+    right: 5%;
+  }
+</style>
