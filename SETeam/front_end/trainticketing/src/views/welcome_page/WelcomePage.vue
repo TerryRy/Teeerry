@@ -29,6 +29,7 @@
 
 <script>
 import '@/assets/css/welcomepage.css'
+import axios from 'axios'
 export default {
   name: "WelcomePage",
   props:{
@@ -39,7 +40,7 @@ export default {
   },
   data(){
     return{
-      isRegister : true
+      isRegister : false
     }
     },
   methods:{
@@ -47,7 +48,60 @@ export default {
       this.isRegister=!(this.isRegister)
     },
     login(){
-      this.$emit('1000');
+      axios.post('/users/login',
+          {
+            "name": this.username,
+            "passwd":this.password,
+          })
+          .then(function(response)
+          {
+            switch(response.status){
+              case 200:
+                this.$emit('login');
+                break;
+              case 404:
+                alert("用户名或密码错误，请检查后重试。");
+                break;
+              case 500:
+                alert("用户信息查询异常，请稍后重试。");
+                break;
+            }
+          })
+          .catch(function(){alert("网络异常，请稍后重试。");})
+
+    },
+    register(){
+      if(this.password!==this.confirmPassword)
+      {
+        alert("两次密码输入不一致！");
+        return;
+      }
+      //axios.get('/users/register/<code>')
+      //    .then(() =>{alert("注册成功！");this.isRegister=false;})
+      //    .catch(() =>alert("注册失败，请稍后重试！"))
+      axios.post('/users/register',
+          {
+            "name": this.username,
+            "passwd":this.password,
+            "email":this.email
+          })
+          .then(function(response){
+            switch (response.status){
+              case 200:
+                alert("注册成功！");
+                this.isRegister=false;
+                break;
+              case 500:
+                alert("用户名已存在。");
+                break;
+              case 501:
+                alert("服务器错误，请稍后重试。");
+                break;
+            }
+          })
+          .catch(function(){
+            alert("网络错误，请稍后重试。");
+          })
     }
 
   }

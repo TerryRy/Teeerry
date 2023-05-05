@@ -1,7 +1,7 @@
 <template>
   <div><TopLine/></div>
   <div id="content" v-if="loginstatus"><HomePage/></div>
-  <div id="content" v-else><WelcomePage :loginstatus="loginstatus" @1000="loginstatus = true"/></div>
+  <div id="content" v-else><WelcomePage :loginstatus="loginstatus" @login="loginstatus = true"/></div>
 </template>
 
 <script>
