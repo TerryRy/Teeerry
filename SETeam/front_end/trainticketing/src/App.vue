@@ -1,18 +1,18 @@
 <template>
-  <div><TopLine/></div>
   <div id="content" v-if="loginstatus"><HomePage/></div>
   <div id="content" v-else><WelcomePage :loginstatus="loginstatus" @login="loginstatus = true"/></div>
 </template>
 
 <script>
-import TopLine from "@/components/common/TopLine.vue";
 import WelcomePage from "welcome_page/WelcomePage.vue";
+import HomePage from "@/views/homepage/HomePage.vue";
+import '@/assets/css/backgroundimage.css'
 
 export default {
   name: 'App',
   components: {
     WelcomePage,
-    TopLine
+    HomePage
   },
   data(){
     return{
@@ -38,7 +38,10 @@ export default {
 }
 #content{
   position: absolute;
-  border-top: 80px;
+  border-top: 0px;
+  padding-top: 0px;
+  top:0px;
   width:100%;
 }
+
 </style>

@@ -1,37 +1,42 @@
 <template>
-  <div id="welcomeWord"><p>欢迎使用畅游中国！</p></div>
-  <div id="input">
-    <form id="register-form" v-if="isRegister">
-      <h3>注册</h3>
-      <input type="text" placeholder="用户名" v-model="username" /><br><br>
-      <input type="password" placeholder="密码" v-model="password" /><br><br>
-      <input type="password" placeholder="确认密码" v-model="confirmPassword" /><br><br>
-      <input type="email" placeholder="邮箱" v-model="email" /><br><br>
-      <input type="submit" value="注册" @click="register" />
-      <p>
-        已有账号？<a href="#" @click="toggleForm">去登录</a>
-      </p>
-      <div v-if="errorMessage" class="error-message">{{ errorMessage }}</div>
-    </form>
+  <div id="topline"><TopLine/></div>
+  <div id="all">
+    <div id="welcomeWord"><p>欢迎使用畅游中国!</p></div>
+    <div id="Dev">
+      <form id="register-form" v-if="isRegister">
+        <h3>注册</h3>
+        <input class="scn" type="text" placeholder="用户名" v-model="username"/><br><br>
+        <input class="scn" type="password" placeholder="密码" v-model="password"/><br><br>
+        <input class="scn" type="password" placeholder="确认密码" v-model="confirmPassword"/><br><br>
+        <input class="scn" type="email" placeholder="邮箱" v-model="email"/><br><br>
+        <input type="submit" value="注册" @click="register" />
+        <p>
+          已有账号？<a href="#" @click="toggleForm">去登录</a>
+        </p>
+        <div v-if="errorMessage" class="error-message">{{ errorMessage }}</div>
+      </form>
 
-    <form id="login-form" v-else>
-      <h3>登录</h3>
-      <input type="text" placeholder="用户名" v-model="username" /><br><br>
-      <input type="password" placeholder="密码" v-model="password" /><br><br>
-      <input type="submit" value="登录" @click="login" />
-      <p>
-        没有账号？<a href="#" @click="toggleForm">去注册</a>
-      </p>
-      <div v-if="errorMessage" class="error-message">{{ errorMessage }}</div>
-    </form>
+      <form id="login-form" v-else>
+        <h3>登录</h3>
+        <input class="scn" type="text" placeholder="用户名" v-model="username" /><br><br>
+        <input class="scn" type="password" placeholder="密码" v-model="password" /><br><br>
+        <input type="submit" value="登录" @click="login" />
+        <p>
+          没有账号？<a href="#" @click="toggleForm">去注册</a>
+        </p>
+        <div v-if="errorMessage" class="error-message">{{ errorMessage }}</div>
+      </form>
+    </div>
   </div>
 </template>
 
 <script>
-import '@/assets/css/welcomepage.css'
+
 import axios from 'axios'
+import TopLine from "@/components/common/TopLine.vue";
 export default {
   name: "WelcomePage",
+  components: {TopLine},
   props:{
     loginstatus: {
       type:Boolean,
@@ -109,6 +114,11 @@ export default {
 </script>
 
 <style scoped>
+  #topline{
+    position: relative;
+    top:0px;
+    padding-top: 0px;
+  }
   #welcomeWord{
     position:absolute;
     width:100%;
@@ -117,10 +127,12 @@ export default {
     top:250px;
   }
   #welcomeWord p{
-    font-size: 26px;
-    font-family: Microsoft YaHei,serif;
+    margin-top: -15px;
+    font-size: 47px;
     font-weight: bold;
-    color: white;
+    color: black;
+    letter-spacing: 3px;
+    font-family: 华光行书_CNKI, serif;
   }
   #buttons{
     display: flex;
@@ -132,20 +144,50 @@ export default {
     align-items:center;
     top:300px;
   }
-  #input p{
-    color:white;
+  #Dev{
+    font-size: 25px;
+    margin: 30px;
+    padding-top: 7px;
+    padding-bottom: 13px;
+    padding-left: 30px;
+    padding-right: 30px;
+    background-color: rgb(255, 255, 255, 0.6);
+    position: absolute;
+    top: 300px;
+    /*vertical-align: middle;*/
+    justify-content: center;
+    align-items: center;
+    display: flex;
+    border-radius: 10px;
   }
-  #input a{
+  #all {
+    justify-content: center;
+    align-items: center;
+    display: flex;
+  }
+  #input p{
+    color: black;
+  }
+  #Dev a{
     text-decoration: none;
-    color: white;
+    color: black;
     font-family: Microsoft YaHei,serif;
   }
-  #input a:visited{
+  #Dev a:visited{
     text-decoration: none;
-    color: white;
+    color: black;
   }
-  #input a:hover{
+  #Dev a:hover{
     text-decoration: none;
-    color: orangered;
+    color: skyblue;
   }
+
+  .scn {
+    border: none;
+  }
+
+  input::placeholder {
+    color: rgba(0,0,0,0.3);
+  }
+
 </style>

@@ -2,17 +2,13 @@
   <div id="TopLine">
   <div id="icon"><img src="~images/icon.png"></div>
   <div id="name"><p>畅游中国铁路售票官方网站</p></div>
-  <div id="loginstatus"><StatusLogin/></div>
   </div>
 </template>
 
 <script>
-import StatusLogin from './StatusLogin.vue'
+
 export default {
-  name: "TopLine",
-  components: {
-    StatusLogin
-  }
+  name: "TopLine"
 }
 </script>
 
@@ -44,9 +40,5 @@ export default {
     font-family: Microsoft YaHei,serif;
     font-weight: bold;
     color: black;
-  }
-  #loginstatus{
-    position: absolute;
-    right: 5%;
   }
 </style>
