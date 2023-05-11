@@ -1,6 +1,6 @@
 <template>
 <div id="topline"><TopLine/></div>
-<div><NavLine/></div>
+<div id="nav"><NavLine/></div>
 </template>
 
 <script>

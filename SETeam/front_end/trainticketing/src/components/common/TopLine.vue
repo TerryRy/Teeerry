@@ -19,7 +19,7 @@ export default {
     display: flex;
     align-items: center;
     flex-wrap:wrap;
-    position:absolute;
+    position:fixed;
     top:0px;
     width: 100%;
     height: 80px;

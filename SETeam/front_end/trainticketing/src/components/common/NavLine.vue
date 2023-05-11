@@ -27,8 +27,9 @@ export default {
     color: #fff;
     font-size: 18px;
     font-weight: bold;
-    position:relative;
+    position:fixed;
     top:80px;
+    width: 100%;
   }
 
   nav ul {
