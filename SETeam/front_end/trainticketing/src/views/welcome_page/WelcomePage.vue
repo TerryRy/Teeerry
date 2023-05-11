@@ -3,7 +3,7 @@
   <div id="all">
     <div id="welcomeWord"><p>欢迎使用畅游中国!</p></div>
     <div id="Dev">
-      <form id="register-form" v-if="isRegister">
+      <form id="register-form" v-if="loginMode===0">
         <h3>注册</h3>
         <input class="scn" type="text" placeholder="用户名" v-model="username"/><br><br>
         <input class="scn" type="password" placeholder="密码" v-model="password"/><br><br>
@@ -11,19 +11,39 @@
         <input class="scn" type="email" placeholder="邮箱" v-model="email"/><br><br>
         <input type="submit" value="注册" @click="register" />
         <p>
-          已有账号？<a href="#" @click="toggleForm">去登录</a>
+          已有账号？<a href="#" @click="toggleForm(1)">去登录</a>
         </p>
         <div v-if="errorMessage" class="error-message">{{ errorMessage }}</div>
       </form>
 
-      <form id="login-form" v-else>
+      <form id="login-form" v-else-if="loginMode===1">
         <h3>登录</h3>
         <input class="scn" type="text" placeholder="用户名" v-model="username" /><br><br>
         <input class="scn" type="password" placeholder="密码" v-model="password" /><br><br>
         <input type="submit" value="登录" @click="login" />
         <p>
-          没有账号？<a href="#" @click="toggleForm">去注册</a>
+          没有账号？<a href="#" @click="toggleForm(0)">去注册</a>
         </p>
+        <input type="button" value="系统管理员入口" @click="toggleForm(2)" />
+        <input type="button" value="铁路系统员入口" @click="toggleForm(3)" />
+        <div v-if="errorMessage" class="error-message">{{ errorMessage }}</div>
+      </form>
+
+      <form id="login-form" v-else-if="loginMode===2">
+        <h3>系统管理员登录</h3>
+        <input class="scn" type="text" placeholder="用户名" v-model="username" /><br><br>
+        <input class="scn" type="password" placeholder="密码" v-model="password" /><br><br>
+        <input type="submit" value="登录" @click="login" />
+        <input type="button" value="返回用户登录" @click="toggleForm(1)" />
+        <div v-if="errorMessage" class="error-message">{{ errorMessage }}</div>
+      </form>
+
+      <form id="login-form" v-else-if="loginMode===3">
+        <h3>铁路系统员登录</h3>
+        <input class="scn" type="text" placeholder="用户名" v-model="username" /><br><br>
+        <input class="scn" type="password" placeholder="密码" v-model="password" /><br><br>
+        <input type="submit" value="登录" @click="login" />
+        <input type="button" value="返回用户登录" @click="toggleForm(1)" />
         <div v-if="errorMessage" class="error-message">{{ errorMessage }}</div>
       </form>
     </div>
@@ -45,12 +65,13 @@ export default {
   },
   data(){
     return{
-      isRegister : false
+      //登录模式：0-注册，1-用户登录，2-系统管理员登录，3-铁路系统员登录
+      loginMode : 2
     }
     },
   methods:{
-    toggleForm(){
-      this.isRegister=!(this.isRegister)
+    toggleForm(mode){
+      this.loginMode=mode;
     },
     login(){
       axios.post('/users/login',
@@ -62,7 +83,7 @@ export default {
           {
             switch(response.status){
               case 200:
-                this.$emit('login');
+                this.$emit('login',this.username,this.password);
                 break;
               case 404:
                 alert("用户名或密码错误，请检查后重试。");

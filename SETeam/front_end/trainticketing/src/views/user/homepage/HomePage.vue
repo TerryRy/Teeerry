@@ -1,16 +1,16 @@
 <template>
-<div id="topline"><Topline/></div>
+<div id="topline"><TopLine/></div>
 <div><NavLine/></div>
 </template>
 
 <script>
-import Topline from 'common/TopLine.vue'
+import TopLine from "@/components/common/TopLine.vue";
 import NavLine from "@/components/common/NavLine.vue";
 export default {
   name: "HomePage",
   components: {
     NavLine,
-    Topline
+    TopLine
   }
 }
 </script>
