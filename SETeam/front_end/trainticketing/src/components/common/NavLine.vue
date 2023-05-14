@@ -1,10 +1,10 @@
 <template>
   <nav>
     <ul>
-      <li id="leftblock"><a href="#">车票预订</a></li>
-      <li><a href="#">订单管理</a></li>
-      <li><a href="#">账户管理</a></li>
-      <li><a href="#">个人中心</a></li>
+      <li id="leftblock"><a href="#" @click="turnToTicketBooking">车票预订</a></li>
+      <li><a href="#" @click="turnToBillsManage">订单管理</a></li>
+      <li><a href="#" @click="turnToAccountManage">账户管理</a></li>
+      <li><a href="#" @click="turnToPersonalCenter">个人中心</a></li>
       <li id="rightblock"><a href="#" @click="logout">退出登录</a></li>
     </ul>
   </nav>
@@ -16,6 +16,18 @@ export default {
   methods:{
     logout(){
       this.$emit('logout');
+    },
+    turnToAccountManage(){
+      this.$emit('turnToAccountManage');
+    },
+    turnToTicketBooking(){
+      this.$emit('turnToTicketBooking');
+    },
+    turnToBillsManage(){
+      this.$emit('turnToBillsManage');
+    },
+    turnToPersonalCenter(){
+      this.$emit('turnToPersonalCenter');
     }
   }
 }

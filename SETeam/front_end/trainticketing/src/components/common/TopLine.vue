@@ -1,6 +1,6 @@
 <template>
   <div id="TopLine">
-  <div id="icon"><img src="~images/icon.png"></div>
+  <div id="icon"><img src="@/assets/images/icon.png"></div>
   <div id="name"><p>畅游中国铁路售票官方网站</p></div>
   </div>
 </template>

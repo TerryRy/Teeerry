@@ -9,7 +9,7 @@
         <input class="scn" type="password" placeholder="密码" v-model="password"/><br><br>
         <input class="scn" type="password" placeholder="确认密码" v-model="confirmPassword"/><br><br>
         <input class="scn" type="email" placeholder="邮箱" v-model="email"/><br><br>
-        <input type="submit" value="注册" @click="register" />
+        <input type="submit" value="注册" @click="register" style="background-color: rgba(102,185,222,1); color: white; padding: 10px 20px; border: none; border-radius: 4px; font-size: 16px; cursor: pointer;"/>
         <p>
           已有账号？<a href="#" @click="toggleForm(1)">去登录</a>
         </p>
@@ -20,12 +20,13 @@
         <h3>登录</h3>
         <input class="scn" type="text" placeholder="用户名" v-model="username" /><br><br>
         <input class="scn" type="password" placeholder="密码" v-model="password" /><br><br>
-        <input type="submit" value="登录" @click="login" />
+        <input type="submit" value="登录" @click="login" style="background-color: #4CAF50; color: white; padding: 10px 20px; border: none; border-radius: 4px; font-size: 16px; cursor: pointer;"/>
         <p>
           没有账号？<a href="#" @click="toggleForm(0)">去注册</a>
         </p>
-        <input type="button" value="系统管理员入口" @click="toggleForm(2)" />
-        <input type="button" value="铁路系统员入口" @click="toggleForm(3)" />
+        <input type="button" value="系统管理员入口" @click="toggleForm(2)" style="background-color: rgba(102,185,222,1); color: white; padding: 10px 20px; border: none; border-radius: 4px; font-size: 16px; cursor: pointer;"/>
+        &nbsp;&nbsp;
+        <input type="button" value="铁路系统员入口" @click="toggleForm(3)" style="background-color: rgb(7,231,145); color: white; padding: 10px 20px; border: none; border-radius: 4px; font-size: 16px; cursor: pointer;"/>
         <div v-if="errorMessage" class="error-message">{{ errorMessage }}</div>
       </form>
 
@@ -33,8 +34,9 @@
         <h3>系统管理员登录</h3>
         <input class="scn" type="text" placeholder="用户名" v-model="username" /><br><br>
         <input class="scn" type="password" placeholder="密码" v-model="password" /><br><br>
-        <input type="submit" value="登录" @click="login" />
-        <input type="button" value="返回用户登录" @click="toggleForm(1)" />
+        <input type="submit" value="登录" @click="login" style="background-color: #4CAF50; color: white; padding: 10px 20px; border: none; border-radius: 4px; font-size: 16px; cursor: pointer;"/>
+        &nbsp;&nbsp;
+        <input type="button" value="返回用户登录" @click="toggleForm(1)" style="background-color: rgba(102,185,222,1); color: white; padding: 10px 20px; border: none; border-radius: 4px; font-size: 16px; cursor: pointer;"/>
         <div v-if="errorMessage" class="error-message">{{ errorMessage }}</div>
       </form>
 
@@ -42,8 +44,9 @@
         <h3>铁路系统员登录</h3>
         <input class="scn" type="text" placeholder="用户名" v-model="username" /><br><br>
         <input class="scn" type="password" placeholder="密码" v-model="password" /><br><br>
-        <input type="submit" value="登录" @click="login" />
-        <input type="button" value="返回用户登录" @click="toggleForm(1)" />
+        <input type="submit" value="登录" @click="login" style="background-color: #4CAF50; color: white; padding: 10px 20px; border: none; border-radius: 4px; font-size: 16px; cursor: pointer;"/>
+        &nbsp;&nbsp;
+        <input type="button" value="返回用户登录" @click="toggleForm(1)" style="background-color: rgba(102,185,222,1); color: white; padding: 10px 20px; border: none; border-radius: 4px; font-size: 16px; cursor: pointer;"/>
         <div v-if="errorMessage" class="error-message">{{ errorMessage }}</div>
       </form>
     </div>
@@ -66,7 +69,7 @@ export default {
   data(){
     return{
       //登录模式：0-注册，1-用户登录，2-系统管理员登录，3-铁路系统员登录
-      loginMode : 2
+      loginMode : 1
     }
     },
   methods:{
@@ -211,4 +214,7 @@ export default {
     color: rgba(0,0,0,0.3);
   }
 
+  form p{
+    font-size: 18px;
+  }
 </style>
