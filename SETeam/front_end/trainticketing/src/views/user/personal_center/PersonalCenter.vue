@@ -11,7 +11,7 @@ import TopLine from "@/components/common/TopLine.vue";
 import NavLine from "@/components/common/NavLine.vue";
 
 export default {
-  name: "TicketChangeConfirm",
+  name: "PersonalCenter",
   components: {NavLine, TopLine}
 }
 </script>

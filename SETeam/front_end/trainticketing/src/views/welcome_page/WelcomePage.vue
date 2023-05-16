@@ -178,6 +178,7 @@ export default {
     background-color: rgb(255, 255, 255, 0.6);
     position: absolute;
     top: 300px;
+    width: 600px;
     /*vertical-align: middle;*/
     justify-content: center;
     align-items: center;
@@ -208,6 +209,8 @@ export default {
 
   .scn {
     border: none;
+    height: 30px;
+    border-radius: 5px;
   }
 
   input::placeholder {

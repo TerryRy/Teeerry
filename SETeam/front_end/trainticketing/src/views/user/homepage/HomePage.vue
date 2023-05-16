@@ -1,6 +1,9 @@
 <template>
-<div id="topline"><TopLine/></div>
-<div id="nav"><NavLine/></div>
+  <div id="topline"><TopLine/></div>
+  <div id="nav"><NavLine/></div>
+  <div id="mainBlock">
+
+  </div>
 </template>
 
 <script>
@@ -16,16 +19,16 @@ export default {
 </script>
 
 <style scoped>
-#HomePage {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
 #topline{
   position: relative;
   top:0px;
+}
+
+#mainBlock{
+  margin:0 auto;
+  background-color: rgba(255, 255, 255, 0.8);;
+  width:1400px;
+  height: 100vh;
+  text-align: center;
 }
 </style>

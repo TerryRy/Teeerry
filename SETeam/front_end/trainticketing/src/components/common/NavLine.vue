@@ -1,11 +1,11 @@
 <template>
   <nav>
     <ul>
-      <li id="leftblock"><a href="#" @click="turnToTicketBooking">车票预订</a></li>
-      <li><a href="#" @click="turnToBillsManage">订单管理</a></li>
-      <li><a href="#" @click="turnToAccountManage">账户管理</a></li>
-      <li><a href="#" @click="turnToPersonalCenter">个人中心</a></li>
-      <li id="rightblock"><a href="#" @click="logout">退出登录</a></li>
+      <li id="leftblock"><a href="/homepage" @click="turnToTicketBooking">车票预订</a></li>
+      <li><a href="/orderlist" @click="turnToBillsManage">订单管理</a></li>
+      <li><a href="/accountmanage" @click="turnToAccountManage">账户管理</a></li>
+      <li><a href="/personalcenter" @click="turnToPersonalCenter">个人中心</a></li>
+      <li id="rightblock"><a href="/" @click="logout">退出登录</a></li>
     </ul>
   </nav>
 </template>
