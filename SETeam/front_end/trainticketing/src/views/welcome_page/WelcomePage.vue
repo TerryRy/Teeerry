@@ -34,7 +34,7 @@
         <h3>系统管理员登录</h3>
         <input class="scn" type="text" placeholder="用户名" v-model="username" /><br><br>
         <input class="scn" type="password" placeholder="密码" v-model="password" /><br><br>
-        <input type="button" value="登录" @click="login" style="background-color: #4CAF50; color: white; padding: 10px 20px; border: none; border-radius: 4px; font-size: 16px; cursor: pointer;"/>
+        <input type="button" value="登录" @click="system_admin_login" style="background-color: #4CAF50; color: white; padding: 10px 20px; border: none; border-radius: 4px; font-size: 16px; cursor: pointer;"/>
         &nbsp;&nbsp;
         <input type="button" value="返回用户登录" @click="toggleForm(1)" style="background-color: rgba(102,185,222,1); color: white; padding: 10px 20px; border: none; border-radius: 4px; font-size: 16px; cursor: pointer;"/>
         <div v-if="errorMessage" class="error-message">{{ errorMessage }}</div>
@@ -44,7 +44,7 @@
         <h3>铁路系统员登录</h3>
         <input class="scn" type="text" placeholder="用户名" v-model="username" /><br><br>
         <input class="scn" type="password" placeholder="密码" v-model="password" /><br><br>
-        <input type="button" value="登录" @click="login" style="background-color: #4CAF50; color: white; padding: 10px 20px; border: none; border-radius: 4px; font-size: 16px; cursor: pointer;"/>
+        <input type="button" value="登录" @click="rail_admin_login" style="background-color: #4CAF50; color: white; padding: 10px 20px; border: none; border-radius: 4px; font-size: 16px; cursor: pointer;"/>
         &nbsp;&nbsp;
         <input type="button" value="返回用户登录" @click="toggleForm(1)" style="background-color: rgba(102,185,222,1); color: white; padding: 10px 20px; border: none; border-radius: 4px; font-size: 16px; cursor: pointer;"/>
         <div v-if="errorMessage" class="error-message">{{ errorMessage }}</div>
@@ -74,7 +74,8 @@ export default {
       loginMode : 1, //默认的初始界面就是用户登录界面
       username : null,
       password : null,
-      email:null
+      email:null,
+      confirmPassword:null
     }
     },
   methods:{
@@ -125,7 +126,7 @@ export default {
           .catch(function(){alert("网络异常，请稍后重试。");})*/
     },
 
-
+    //注册
     register(){
       if(this.password!==this.confirmPassword)
       {
@@ -155,8 +156,89 @@ export default {
           .catch(function(){
             alert("网络错误，请稍后重试。");
           })
-    }
+    },
 
+
+    system_admin_login(){
+      if(this.username==null)
+      {
+        alert("用户名不能为空！");
+        return;
+      }
+      if(this.password==null)
+      {
+        alert("密码不能为空！");
+        return;
+      }
+      const user = this.username;
+      this.$store.dispatch('login', user);
+      localStorage.setItem('username', user);
+      this.$router.push('/userinfomanage');
+      /*
+      axios.post('{{base_url}}/users/login',
+          {
+            "name": this.username,
+            "passwd":this.password
+          })
+          .then(function(response)
+          {
+            switch(response.data.result){
+              case 0:
+              {
+                const user = this.username;
+                this.$store.dispatch('login', user);\
+                localStorage.setItem('username', user);
+                this.$router.push('/homepage');
+                break;
+              }
+              default:
+                alert("用户名或密码错误，请检查后重试。");
+                break;
+            }
+          })
+          .catch(function(){alert("网络异常，请稍后重试。");})*/
+    },
+
+    //铁路系统员登录
+    rail_admin_login(){
+      if(this.username==null)
+      {
+        alert("用户名不能为空！");
+        return;
+      }
+      if(this.password==null)
+      {
+        alert("密码不能为空！");
+        return;
+      }
+      const user = this.username;
+      this.$store.dispatch('login', user);
+      localStorage.setItem('username', user);
+      this.$router.push('/workspace');
+      /*
+      axios.post('{{base_url}}/users/login',
+          {
+            "name": this.username,
+            "passwd":this.password
+          })
+          .then(function(response)
+          {
+            switch(response.data.result){
+              case 0:
+              {
+                const user = this.username;
+                this.$store.dispatch('login', user);\
+                localStorage.setItem('username', user);
+                this.$router.push('/homepage');
+                break;
+              }
+              default:
+                alert("用户名或密码错误，请检查后重试。");
+                break;
+            }
+          })
+          .catch(function(){alert("网络异常，请稍后重试。");})*/
+    },
   }
 }
 </script>

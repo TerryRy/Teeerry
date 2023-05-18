@@ -1,7 +1,7 @@
 <template>
   <nav>
     <ul>
-      <li id="leftblock"><a href="/homepage" @click="turnToTicketBooking">车票预订</a></li>
+      <li id="leftblock"><a href="/homepage" @click="turnToTicketBooking">车次查询</a></li>
       <li><a href="/orderlist" @click="turnToBillsManage">订单管理</a></li>
       <li><a href="/accountmanage" @click="turnToAccountManage">账户管理</a></li>
       <li><a href="/personalcenter" @click="turnToPersonalCenter">个人中心</a></li>

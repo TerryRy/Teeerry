@@ -22,6 +22,9 @@ import TrainAdd from "@/views/railway_admin/train_add/TrainAdd.vue";
 import trainChange from "@/views/railway_admin/train_change/TrainChange.vue";
 import workSpace from "@/views/railway_admin/workspace/WorkSpace.vue";
 import UserInfoManage from "@/views/system_admin/user_infomation_manage/UserInfoManage.vue";
+import StationAdd from "@/views/railway_admin/station_add/StationAdd.vue";
+import CarriageAdd from "@/views/railway_admin/carriage_add/CarriageAdd.vue";
+import TrainDelete from "@/views/railway_admin/train_delete/TrainDelete.vue";
 
 
 // ...
@@ -41,6 +44,9 @@ const router = createRouter({
         { path: '/ticketchangechoice', component: TicketChangeChoices },
         { path: '/ticketchangeconfirm', component: TicketChangeConfirm },
         { path: '/trainadd', component: TrainAdd },
+        { path: '/stationadd', component: StationAdd },
+        { path: '/carriageadd', component: CarriageAdd },
+        { path: '/traindelete', component: TrainDelete },
         { path: '/trainchange', component: trainChange },
         { path: '/workspace', component: workSpace },
         { path: '/userinfomanage', component: UserInfoManage }

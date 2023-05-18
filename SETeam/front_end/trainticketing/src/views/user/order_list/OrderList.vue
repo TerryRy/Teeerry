@@ -28,7 +28,6 @@
           </div>
             <button id="button2" v-if="bill.is_expired">删除</button>
             <button id="button1" @click="showdetails(bill)">详情</button>
-
         </div>
       </div>
     </div>

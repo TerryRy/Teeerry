@@ -140,7 +140,9 @@ export default {
 
 #accountinput{
   position: fixed;
-  width: 1400px;
+  width: 200px;
+  padding-right: 600px ;
+  padding-left: 600px ;
   align-items:center;
   display: block;
   top:300px;

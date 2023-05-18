@@ -13,7 +13,7 @@
           <input type="number" class="scn" id="recharge-amount" v-model="rechargeAmount"><br><br>
         </div>
         <input type="button" value="充值" @click="depositMoney" style="background-color: #4CAF50; color: white; padding: 10px 20px; border: none; border-radius: 4px; font-size: 16px; cursor: pointer;"/>&nbsp;&nbsp;
-        <a href="/accountmanage"><input type="button" value="返回" @click="turnToAccountManage" style="background-color: #f1f0f0; color: black; padding: 10px 20px; border: none; border-radius: 4px; font-size: 16px; cursor: pointer;"/></a>
+        <a href="/accountmanage"><input type="button" value="返回" style="background-color: #f1f0f0; color: black; padding: 10px 20px; border: none; border-radius: 4px; font-size: 16px; cursor: pointer;"/></a>
         <div v-if="errorMessage" class="error-message">{{ errorMessage }}</div>
       </form>
     </div>
@@ -23,6 +23,7 @@
 <script>
 import TopLine from "@/components/common/TopLine.vue";
 import NavLine from "@/components/common/NavLine.vue";
+import axios from "axios";
 
 export default {
   name: "DepositMoney",
@@ -32,10 +33,39 @@ export default {
       return this.$store.getters.getAccount;
     }
   },
+  data(){
+    return{
+      rechargeAmount:0
+    }
+  },
   methods:{
     depositMoney()
     {
-
+      alert("充值成功！");
+      axios({
+        "method": "PUT",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"amount\": {{amount}}\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/accounts/1",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "accounts",
+            "1"
+          ]
+        }
+      });
+      this.$router.push('/accountmanage');
     }
   }
 }
