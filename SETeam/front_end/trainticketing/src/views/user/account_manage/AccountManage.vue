@@ -1,35 +1,31 @@
 <template>
   <div id="topline"><TopLine/></div>
-  <div id="nav"><NavLine @turnToBillsManage="turnToBillsManage" @turnToAccountManage="turnToAccountManage" @logout="logout"/></div>
+  <div id="nav"><NavLine/></div>
   <div id="mainBlock">
     <div id="introduceWord">
       <p>账户管理</p>
     </div>
     <div id="secondFloor">
       <div id="money">
-        <div><h3>{{username}},您好!<br>您的账户情况如下:</h3></div>
+        <div><h3>{{this.user}},您好!<br>您的账户情况如下:</h3></div>
         <div><p>账户余额:{{money}}元</p></div>
         <div><p>账户数量:{{amount}}</p></div>
         <div>
-          <button style="background-color: #4CAF50; color: white; padding: 10px 20px; border: none; border-radius: 4px; font-size: 16px; cursor: pointer;" @click="turnToDepositMoney">充值</button>
-          &nbsp;&nbsp;
-          <button style="background-color: #f1f0f0; color: black; padding: 10px 20px; border: none; border-radius: 4px; font-size: 16px; cursor: pointer;" @click="add">添加账户</button>
+          <a href="/accountadd"><button style="background-color: #f1f0f0; color: black; padding: 10px 20px; border: none; border-radius: 4px; font-size: 16px; cursor: pointer;" @click="add">添加账户</button></a>
         </div>
       </div>
       <div class="card-grid">
-        <div class="card">
+        <div class="card" v-for="account in accounts" :key="account.id" :style="getCardColor()">
           <div class="cardInfo">
-            <p3>我的银行卡</p3>
-            <p>6210000000000006666</p>
+            <p3>{{account.name}}</p3>
+            <p>{{account.card_id}}</p>
           </div>
-          <div><button>删除账户</button></div>
+          <div>
+            <button id="button2" @click="deposit(account)">充值</button>
+            &nbsp;&nbsp;
+            <button id="button1" @click="deleteCard(account.id)">删除账户</button>
+          </div>
         </div>
-        <div class="card">银行卡账户 1</div>
-        <div class="card">银行卡账户 1</div>
-        <div class="card">银行卡账户 1</div>
-        <div class="card">银行卡账户 1</div>
-        <div class="card">银行卡账户 1</div>
-        <div class="card">银行卡账户 1</div>
       </div>
     </div>
   </div>
@@ -38,43 +34,171 @@
 <script>
 import NavLine from "@/components/common/NavLine.vue";
 import TopLine from "@/components/common/TopLine.vue";
+import axios from "axios";
+import depositMoney from "@/views/user/deposit_money/DepositMoney.vue";
 
 export default {
   name: "AccountManage",
   components: {TopLine, NavLine},
+  computed: {
+    depositMoney() {
+      return depositMoney
+    },
+    user() {
+      return this.$store.getters.getUser;
+    }
+  },
   data(){
     return{
       money:0,
       amount:0,
-      username:"尊敬的用户"
+      colors: [
+        'rgba(92, 167, 225, 0.45)',
+        'rgba(0, 128, 64, 0.45)',
+        'rgba(255, 92, 0, 0.45)',
+        'rgba(83, 51, 255, 0.45)',
+        'rgba(127, 195, 236, 0.45)',
+        'rgba(101, 185, 96, 0.45)',
+        'rgba(152, 216, 122, 0.45)',
+        'rgba(255, 141, 68, 0.45)',
+        'rgba(255, 174, 113, 0.45)',
+        'rgba(189, 147, 249, 0.45)',
+        'rgba(213, 176, 252, 0.45)'
+
+      ],
+      accounts:[
+        {
+          "id": 1,
+          "name": "account1",
+          "card_id": "122435543434",
+          "amount": 300.00
+        },
+        {
+          "id": 2,
+          "name": "account2",
+          "card_id": "876543676876",
+          "amount": 50.00
+        },
+        {
+          "id": 3,
+          "name": "account2",
+          "card_id": "876543676876",
+          "amount": 50.00
+        },
+        {
+          "id": 4,
+          "name": "account2",
+          "card_id": "876543676876",
+          "amount": 50.00
+        },
+        {
+          "id": 5,
+          "name": "account2",
+          "card_id": "876543676876",
+          "amount": 50.00
+        },
+        {
+          "id": 6,
+          "name": "account2",
+          "card_id": "876543676876",
+          "amount": 50.00
+        },
+        {
+          "id": 7,
+          "name": "account2",
+          "card_id": "876543676876",
+          "amount": 50.00
+        },
+        {
+          "id": 8,
+          "name": "account2",
+          "card_id": "876543676876",
+          "amount": 50.00
+        },{
+          "id": 9,
+          "name": "account2",
+          "card_id": "876543676876",
+          "amount": 50.00
+        },
+        {
+          "id": 10,
+          "name": "account2",
+          "card_id": "876543676876",
+          "amount": 50.00
+        },
+
+        ]
     }
   },
 
+  mounted() {
+    const username = localStorage.getItem('username');
+    if (username) {
+      this.$store.commit('setUser', username);
+    }
+    axios.get('{{base_url}}/accounts',
+        {
+
+        })
+        .then(function(response)
+        {
+          this.accounts=response.data.accounts;
+        })
+        .catch(function(){})
+  },
+
   methods:{
-    turnToAccountManage()
+    // eslint-disable-next-line no-unused-vars
+    deleteCard(accountid)
     {
-      this.$emit('turnToAccountManage');
+      const token = localStorage.getItem('jwtToken');
+      axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+      axios({
+        "method": "DELETE",
+        "body": {
+          "mode": "raw",
+          "raw": "",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/accounts/{{accountid}}",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "accounts",
+            "{{accountid}}"
+          ]
+        }
+      })
+        .then(function(response)
+        {
+          switch(response.data.result){
+            case 0:
+            {
+              break;
+            }
+            default:
+              alert("出现问题，请重试。");
+              break;
+          }
+        })
+        .catch(function(){alert("网络异常，请稍后重试。");})
     },
-    logout()
+    deposit(account)
     {
-      this.$emit('logout');
+      this.$store.dispatch('storeAccount', account);
+      localStorage.setItem('storeAccount', account);
+      this.$router.push('/depositmoney');
     },
-    add()
+    getCardColor()
     {
-      this.$emit('turnToAccountAdd')
-    },
-    turnToDepositMoney()
-    {
-      this.$emit('turnToDepositMoney');
-    },
-    turnToTicketBooking(){
-      this.$emit('turnToTicketBooking');
-    },
-    turnToBillsManage(){
-      this.$emit('turnToBillsManage');
-    },
-    turnToPersonalCenter(){
-      this.$emit('turnToPersonalCenter');
+      const randomColor = this.colors[Math.floor(Math.random() * this.colors.length)];
+      return { backgroundColor: randomColor };
     }
   }
 }
@@ -93,7 +217,7 @@ export default {
 #mainBlock{
   margin:0 auto;
   background-color: rgba(255, 255, 255, 0.8);
-  top:150px;
+  top:0px;
   width:1400px;
   height: 100vh;
   text-align: center;
@@ -148,10 +272,10 @@ export default {
   width:600px;
   display: grid;
   grid-template-rows: repeat(3, 1fr); /* 三列网格 */
-  grid-gap: 10px; /* 网格之间的间距 */
-  height: 400px;
+  grid-gap: 3px; /* 网格之间的间距 */
+  height: 500px;
   padding: 10px;
-  padding-top: 40px;
+  border-top: 40px;
   overflow-y: scroll;
 }
 
@@ -169,10 +293,25 @@ export default {
   width: 450px;
 }
 
-.card button{
+#button1{
+  position: absolute;
+  right:50px;
   background-color: #ec1616;
   color: #ffffff;
   padding: 10px 10px;
+  border: none;
+  border-radius: 4px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+#button2
+{
+  position: absolute;
+  right:150px;
+  background-color: #4CAF50;
+  color: white;
+  padding: 10px 20px;
   border: none;
   border-radius: 4px;
   font-size: 16px;

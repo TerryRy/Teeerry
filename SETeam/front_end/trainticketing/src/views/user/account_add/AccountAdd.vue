@@ -1,6 +1,6 @@
 <template>
   <div id="topline"><TopLine/></div>
-  <div id="nav"><NavLine @turnToBillsManage="turnToBillsManage" @turnToAccountManage="turnToAccountManage" @logout="logout"/></div>
+  <div id="nav"><NavLine/></div>
   <div id="mainBlock">
     <div id="introduceWord">
     <p>添加您的银行卡账户</p>
@@ -10,7 +10,7 @@
         <p>请设置账户名称</p><input class="scn" type="text" placeholder="账户名称" v-model="accountName"/><br><br>
         <p>请输入银行卡号</p><input class="scn" type="text" placeholder="银行卡号" v-model="accountID"/><br><br>
         <input type="button" value="添加" @click="addAccount" style="background-color: #4CAF50; color: white; padding: 10px 20px; border: none; border-radius: 4px; font-size: 16px; cursor: pointer;"/>&nbsp;&nbsp;
-        <input type="button" value="返回" @click="turnToAccountManage" style="background-color: #f1f0f0; color: black; padding: 10px 20px; border: none; border-radius: 4px; font-size: 16px; cursor: pointer;"/>
+        <a href="/accountmanage"><input type="button" value="返回" @click="turnToAccountManage" style="background-color: #f1f0f0; color: black; padding: 10px 20px; border: none; border-radius: 4px; font-size: 16px; cursor: pointer;"/></a>
         <div v-if="errorMessage" class="error-message">{{ errorMessage }}</div>
       </form>
     </div>
@@ -20,6 +20,7 @@
 <script>
 import NavLine from "@/components/common/NavLine.vue";
 import TopLine from "@/components/common/TopLine.vue";
+import axios from "axios";
 
 export default {
   name: "AccountAdd",
@@ -27,27 +28,87 @@ export default {
     NavLine,
     TopLine
   },
+  computed: {
+    user() {
+      return this.$store.getters.getUser;
+    }
+  },
+  data(){
+    return{
+      accountName:null,
+      accountID:null
+    }
+  },
+  mounted() {
+    // 从本地存储中恢复用户名到 Vuex 的 state 中
+    const username = localStorage.getItem('username');
+    if (username) {
+      this.$store.commit('setUser', username);
+    }
+  },
   methods:{
     addAccount()
     {
-      alert("添加失败！");
-    },
-    logout()
-    {
-      this.$emit('logout');
-    },
-    turnToAccountManage()
-    {
-      this.$emit('turnToAccountManage');
-    },
-    turnToTicketBooking(){
-      this.$emit('turnToTicketBooking');
-    },
-    turnToBillsManage(){
-      this.$emit('turnToBillsManage');
-    },
-    turnToPersonalCenter(){
-      this.$emit('turnToPersonalCenter');
+      axios({
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"account_name\": \"{{this.accountName}}\",\r\n    \"card_holder_name\": \"{{this.user}}\",\r\n    \"card_id\": \"{{this.accountID}}\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/accounts/",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "accounts",
+            ""
+          ]
+        }
+      })
+          .then(function(response)
+          {
+            switch(response.data.result){
+              case 0:
+              {
+                alert("账户添加成功！")
+                break;
+              }
+              default:
+                alert("出现问题，请重试。");
+                break;
+            }
+          })
+          .catch(function(){alert("网络异常，请稍后重试。");})
+      /*
+      axios.post('{{base_url}}/accounts/',
+          {
+            "account_name": this.accountName,
+            "card_holder_name":this.user,
+            "card_id":this.accountID
+          })
+          .then(function(response)
+          {
+            switch(response.data.result){
+              case 0:
+              {
+                alert("账户添加成功！")
+                break;
+              }
+              default:
+                alert("出现问题，请重试。");
+                break;
+            }
+          })
+          .catch(function(){alert("网络异常，请稍后重试。");})
+
+       */
     }
   }
 }

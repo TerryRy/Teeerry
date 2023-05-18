@@ -10,36 +10,40 @@
         <tbody>
         <tr>
           <th class="vertical-header">乘车人姓名</th>
-          <td>{{passengerName}}</td>
+          <td>{{username}}</td>
         </tr>
         <tr>
           <th class="vertical-header">乘坐车次</th>
-          <td>{{trainID}}</td>
+          <td>{{bill.schedule.schedule_no}}</td>
         </tr>
         <tr>
           <th class="vertical-header">车厢号</th>
-          <td>{{carriageID}}</td>
+          <td>{{bill.carriage.name}}</td>
         </tr>
         <tr>
           <th class="vertical-header">座位号</th>
-          <td>{{seatID}}</td>
+          <td>{{bill.seat_no}}</td>
         </tr>
         <tr>
-          <th class="vertical-header">出发车站</th>
+          <th class="vertical-header">出发时间</th>
+          <td>{{bill.schedule.departure_time}}</td>
+        </tr>
+        <tr>
+          <th class="vertical-header">出发地</th>
           <td>{{start}}</td>
         </tr>
         <tr>
-          <th class="vertical-header">到达车站</th>
+          <th class="vertical-header">目的地</th>
           <td>{{end}}</td>
         </tr>
         </tbody>
       </table>
-      <div id="buttons" v-if="valid">
-        <button style="background-color: #f6bf0b; color: white; padding: 10px 20px; border: none; border-radius: 4px; font-size: 16px; cursor: pointer;">退票</button>
+      <div id="buttons">
+        <button style="background-color: #f6bf0b; color: white; padding: 10px 20px; border: none; border-radius: 4px; font-size: 16px; cursor: pointer;" @click="returnticket(bill)"  v-if="!(bill.is_expired)">退票</button>
         &nbsp;
-        <button style="background-color: #24c6e3; color: white; padding: 10px 20px; border: none; border-radius: 4px; font-size: 16px; cursor: pointer;">改签</button>
+        <a href="/ticketchangechoice"><button style="background-color: #24c6e3; color: white; padding: 10px 20px; border: none; border-radius: 4px; font-size: 16px; cursor: pointer;"  v-if="!(bill.is_expired)">改签</button></a>
         &nbsp;
-        <button @click="turnToBillsManage" style="background-color: rgba(49,79,222,0.21); color: white; padding: 10px 20px; border: none; border-radius: 4px; font-size: 16px; cursor: pointer;">返回</button>
+        <a href="/orderlist"><button style="background-color: rgba(49,79,222,0.21); color: white; padding: 10px 20px; border: none; border-radius: 4px; font-size: 16px; cursor: pointer;">返回</button></a>
       </div>
     </div>
   </div>
@@ -52,28 +56,36 @@ import NavLine from "@/components/common/NavLine.vue";
 export default {
   name: "OrderDetails",
   components: {NavLine, TopLine},
+  computed: {
+    bill() {
+      return this.$store.getters.getBill;
+    },
+    username(){
+      return this.$store.getters.getUser;
+    }
+  },
+  mounted() {
+    const username = localStorage.getItem('username');
+    if (username) {
+      this.$store.commit('setUser', username);
+    }
+    const bill = localStorage.getItem('Bill');
+    if(bill) {
+      this.$store.commit('setBill',bill);
+    }
+  },
   data(){
     return{
       valid:true
     }
   },
   methods:{
-    turnToAccountManage()
+    returnticket(bill)
     {
-      this.$emit('turnToAccountManage');
-    },
-    logout()
-    {
-      this.$emit('logout');
-    },
-    turnToTicketBooking(){
-      this.$emit('turnToTicketBooking');
-    },
-    turnToBillsManage(){
-      this.$emit('turnToBillsManage');
-    },
-    turnToPersonalCenter(){
-      this.$emit('turnToPersonalCenter');
+      confirm("确定要退票吗？");
+      alert("哈哈，太着急了吧！");
+      alert(bill.seat_no);
+      this.$router.push('/orderlist');
     }
   }
 
@@ -151,6 +163,6 @@ td{
 #buttons{
   position: relative;
   width: 1400px;
-  top:250px;
+  top:350px;
 }
 </style>

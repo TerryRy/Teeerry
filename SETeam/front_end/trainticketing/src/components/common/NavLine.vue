@@ -5,7 +5,7 @@
       <li><a href="/orderlist" @click="turnToBillsManage">订单管理</a></li>
       <li><a href="/accountmanage" @click="turnToAccountManage">账户管理</a></li>
       <li><a href="/personalcenter" @click="turnToPersonalCenter">个人中心</a></li>
-      <li id="rightblock"><a href="/" @click="logout">退出登录</a></li>
+      <li id="rightblock"><a @click="logout">退出登录</a></li>
     </ul>
   </nav>
 </template>
@@ -15,19 +15,12 @@ export default {
   name: "NavLine",
   methods:{
     logout(){
-      this.$emit('logout');
-    },
-    turnToAccountManage(){
-      this.$emit('turnToAccountManage');
-    },
-    turnToTicketBooking(){
-      this.$emit('turnToTicketBooking');
-    },
-    turnToBillsManage(){
-      this.$emit('turnToBillsManage');
-    },
-    turnToPersonalCenter(){
-      this.$emit('turnToPersonalCenter');
+      if(confirm('确定要退出登录吗?'))
+      {
+        this.$store.dispatch('logout');
+        localStorage.setItem('username', null);
+        this.$router.push('/');
+      }
     }
   }
 }

@@ -1,22 +1,35 @@
 <template>
   <div id="topline"><TopLine/></div>
-  <div id="nav"><NavLine @turnToBillsManage="turnToBillsManage" @turnToAccountManage="turnToAccountManage" @logout="logout"/></div>
+  <div id="nav"><NavLine/></div>
   <div id="mainBlock">
     <div id="introduceWord">
       <p>订单管理</p>
-      <div>
+      <!--<div>
         <button @click="removeUselssBills">一键清除无效订单</button>
-      </div>
+      </div>-->
     </div>
     <div id="secondFloor">
       <div class="bill-grid">
-        <div class="bill" @click="turnToOrderDetails">订单 1</div>
-        <div class="bill">订单 1</div>
-        <div class="bill">订单 1</div>
-        <div class="bill">订单 1</div>
-        <div class="bill">订单 1</div>
-        <div class="bill">订单 1</div>
-        <div class="bill">订单 1</div>
+        <div class="bill" v-for="bill in bills" :key="bill.id">
+          <div class="billInfo">
+            <p class="id">{{bill.id}}</p>
+            <div class="seatInfo">
+              <span>车次：{{bill.schedule.schedule_no}}&nbsp;&nbsp;
+                车厢号：{{bill.carriage.name}}&nbsp;&nbsp;
+                座位号：{{bill.seat_no}}&nbsp;&nbsp;
+                出发时间：{{bill.schedule.departure_time}}&nbsp;&nbsp;
+                票价：{{bill.amount}}元
+              </span><br>
+              <span>
+                出发车站：&nbsp;&nbsp;
+                目的车站：
+              </span>
+            </div>
+          </div>
+            <button id="button2" v-if="bill.is_expired">删除</button>
+            <button id="button1" @click="showdetails(bill)">详情</button>
+
+        </div>
       </div>
     </div>
   </div>
@@ -25,35 +38,174 @@
 <script>
 import TopLine from "@/components/common/TopLine.vue";
 import NavLine from "@/components/common/NavLine.vue";
+import {toDisplayString} from "vue";
 
 export default {
   name: "OrderList",
   components: {NavLine, TopLine},
+  data(){
+    return{
+      bills:[
+        {
+          "id": 1,
+          "amount": 80.00,
+          "create_time": "time1",
+          "is_expired": true,
+          "is_paid": true,
+          "is_schedule_modified": false,
+          "seat_no": 6,
+          "carriage": {
+            "id": 1,
+            "name": "C12"
+          },
+          "schedule": {
+            "id": 1,
+            "schedule_no": "S123",
+            "departure_time": "time3"
+          }
+        },
+        {
+          "id": 2,
+          "amount": 100.00,
+          "create_time": "time2",
+          "is_expired": false,
+          "is_paid": true,
+          "is_schedule_modified": false,
+          "seat_no": 5,
+          "carriage": {
+            "id": 1,
+            "name": "C12"
+          },
+          "schedule": {
+            "id": 1,
+            "schedule_no": "S123",
+            "departure_time": "time3"
+          }
+        },
+        {
+          "id": 3,
+          "amount": 100.00,
+          "create_time": "time2",
+          "is_expired": false,
+          "is_paid": true,
+          "is_schedule_modified": false,
+          "seat_no": 5,
+          "carriage": {
+            "id": 1,
+            "name": "C12"
+          },
+          "schedule": {
+            "id": 1,
+            "schedule_no": "S123",
+            "departure_time": "time3"
+          }
+        },
+        {
+          "id": 4,
+          "amount": 100.00,
+          "create_time": "time2",
+          "is_expired": false,
+          "is_paid": true,
+          "is_schedule_modified": false,
+          "seat_no": 5,
+          "carriage": {
+            "id": 1,
+            "name": "C12"
+          },
+          "schedule": {
+            "id": 1,
+            "schedule_no": "S123",
+            "departure_time": "time3"
+          }
+        },
+        {
+          "id": 5,
+          "amount": 100.00,
+          "create_time": "time2",
+          "is_expired": false,
+          "is_paid": true,
+          "is_schedule_modified": false,
+          "seat_no": 5,
+          "carriage": {
+            "id": 1,
+            "name": "C12"
+          },
+          "schedule": {
+            "id": 1,
+            "schedule_no": "S123",
+            "departure_time": "time3"
+          }
+        },
+        {
+          "id": 6,
+          "amount": 100.00,
+          "create_time": "time2",
+          "is_expired": false,
+          "is_paid": true,
+          "is_schedule_modified": false,
+          "seat_no": 5,
+          "carriage": {
+            "id": 1,
+            "name": "C12"
+          },
+          "schedule": {
+            "id": 1,
+            "schedule_no": "S123",
+            "departure_time": "time3"
+          }
+        },
+        {
+          "id": 7,
+          "amount": 100.00,
+          "create_time": "time2",
+          "is_expired": false,
+          "is_paid": true,
+          "is_schedule_modified": false,
+          "seat_no": 5,
+          "carriage": {
+            "id": 1,
+            "name": "C12"
+          },
+          "schedule": {
+            "id": 1,
+            "schedule_no": "S123",
+            "departure_time": "time3"
+          }
+        },
+        {
+          "id": 8,
+          "amount": 100.00,
+          "create_time": "time2",
+          "is_expired": false,
+          "is_paid": true,
+          "is_schedule_modified": false,
+          "seat_no": 5,
+          "carriage": {
+            "id": 1,
+            "name": "C12"
+          },
+          "schedule": {
+            "id": 1,
+            "schedule_no": "S123",
+            "departure_time": "time3"
+          }
+        }
+      ]
+    }
+  },
+  mounted() {
+    const username = localStorage.getItem('username');
+    if (username) {
+      this.$store.commit('setUser', username);
+    }
+  },
   methods:{
-    turnToAccountManage()
+    toDisplayString,
+    showdetails(bill)
     {
-      this.$emit('turnToAccountManage');
-    },
-    logout()
-    {
-      this.$emit('logout');
-    },
-    turnToTicketBooking(){
-      this.$emit('turnToTicketBooking');
-    },
-    turnToBillsManage(){
-      this.$emit('turnToBillsManage');
-    },
-    turnToPersonalCenter(){
-      this.$emit('turnToPersonalCenter');
-    },
-    removeUselssBills()
-    {
-      alert("此功能尚未开发");
-    },
-    turnToOrderDetails()
-    {
-      this.$emit("turnToOrderDetails");
+      this.$store.dispatch('storeBill', bill);
+      localStorage.setItem('bill', bill);
+      this.$router.push('/orderdetails');
     }
   }
 }
@@ -107,7 +259,7 @@ export default {
 
 #secondFloor{
   position: fixed;
-  top:300px;
+  top:250px;
   padding: 0;
   margin: 0;
   display: flex;
@@ -116,24 +268,67 @@ export default {
 
 .bill-grid {
   position: absolute;
-  top:0px;
+  top:50px;
   left:200px;
   width:1000px;
   display: grid;
-  grid-template-rows: repeat(3, 1fr);
-  grid-gap: 10px; /* 网格之间的间距 */
-  height: 500px;
+  grid-template-rows: repeat(7, 1fr);
+  grid-gap: 3px; /* 网格之间的间距 */
+  height: 550px;
   padding: 10px;
-  padding-top: 40px;
+  border-top: 40px;
   overflow-y: scroll;
 }
 
 .bill {
-  background-color: #fff;
+  background-color: rgb(103, 186, 222,0.45);
   border: 1px solid #ccc;
-  padding: 20px;
-  text-align: center;
+  padding: 10px;
+  text-align: left;
   font-size: 16px;
-  height: 50px;
+  height: 70px;
+  display: flex;
+  border-radius: 10px;
+
 }
+
+.id{
+  margin: 0;
+  padding: 0;
+  top:0;
+  left:0;
+  font-size: 10px;
+}
+
+.seatInfo{
+  text-align: left;
+  display: inline-block;
+}
+
+#button1{
+  display: inline-block;
+  position: absolute;
+  right:50px;
+  background-color: #ff8102;
+  color: #ffffff;
+  padding: 10px 10px;
+  border: none;
+  border-radius: 4px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+#button2{
+  display: inline-block;
+  position: absolute;
+  right:120px;
+  background-color: #ec2f16;
+  color: #ffffff;
+  padding: 10px 10px;
+  border: none;
+  border-radius: 4px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
 </style>

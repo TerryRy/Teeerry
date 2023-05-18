@@ -20,7 +20,7 @@
         <h3>登录</h3>
         <input class="scn" type="text" placeholder="用户名" v-model="username" /><br><br>
         <input class="scn" type="password" placeholder="密码" v-model="password" /><br><br>
-        <input type="submit" value="登录" @click="login" style="background-color: #4CAF50; color: white; padding: 10px 20px; border: none; border-radius: 4px; font-size: 16px; cursor: pointer;"/>
+        <input type="button" value="登录" @click="login" style="background-color: #4CAF50; color: white; padding: 10px 20px; border: none; border-radius: 4px; font-size: 16px; cursor: pointer;"/>
         <p>
           没有账号？<a href="#" @click="toggleForm(0)">去注册</a>
         </p>
@@ -34,7 +34,7 @@
         <h3>系统管理员登录</h3>
         <input class="scn" type="text" placeholder="用户名" v-model="username" /><br><br>
         <input class="scn" type="password" placeholder="密码" v-model="password" /><br><br>
-        <input type="submit" value="登录" @click="login" style="background-color: #4CAF50; color: white; padding: 10px 20px; border: none; border-radius: 4px; font-size: 16px; cursor: pointer;"/>
+        <input type="button" value="登录" @click="login" style="background-color: #4CAF50; color: white; padding: 10px 20px; border: none; border-radius: 4px; font-size: 16px; cursor: pointer;"/>
         &nbsp;&nbsp;
         <input type="button" value="返回用户登录" @click="toggleForm(1)" style="background-color: rgba(102,185,222,1); color: white; padding: 10px 20px; border: none; border-radius: 4px; font-size: 16px; cursor: pointer;"/>
         <div v-if="errorMessage" class="error-message">{{ errorMessage }}</div>
@@ -44,7 +44,7 @@
         <h3>铁路系统员登录</h3>
         <input class="scn" type="text" placeholder="用户名" v-model="username" /><br><br>
         <input class="scn" type="password" placeholder="密码" v-model="password" /><br><br>
-        <input type="submit" value="登录" @click="login" style="background-color: #4CAF50; color: white; padding: 10px 20px; border: none; border-radius: 4px; font-size: 16px; cursor: pointer;"/>
+        <input type="button" value="登录" @click="login" style="background-color: #4CAF50; color: white; padding: 10px 20px; border: none; border-radius: 4px; font-size: 16px; cursor: pointer;"/>
         &nbsp;&nbsp;
         <input type="button" value="返回用户登录" @click="toggleForm(1)" style="background-color: rgba(102,185,222,1); color: white; padding: 10px 20px; border: none; border-radius: 4px; font-size: 16px; cursor: pointer;"/>
         <div v-if="errorMessage" class="error-message">{{ errorMessage }}</div>
@@ -60,55 +60,79 @@ import TopLine from "@/components/common/TopLine.vue";
 export default {
   name: "WelcomePage",
   components: {TopLine},
-  props:{
-    loginstatus: {
-      type:Boolean,
-      require:true
+  computed: {
+    user() {
+      return this.$store.getters.getUser;
     }
+  },
+  props:{
+
   },
   data(){
     return{
       //登录模式：0-注册，1-用户登录，2-系统管理员登录，3-铁路系统员登录
-      loginMode : 1
+      loginMode : 1, //默认的初始界面就是用户登录界面
+      username : null,
+      password : null,
+      email:null
     }
     },
   methods:{
+    //设置登录模式
     toggleForm(mode){
       this.loginMode=mode;
     },
+
+    //用户登录
     login(){
-      axios.post('/users/login',
+      if(this.username==null)
+      {
+        alert("用户名不能为空！");
+        return;
+      }
+      if(this.password==null)
+      {
+        alert("密码不能为空！");
+        return;
+      }
+      const user = this.username;
+      alert(user);
+      this.$store.dispatch('login', user);
+      localStorage.setItem('username', user);
+      this.$router.push('/homepage');
+      /*
+      axios.post('{{base_url}}/users/login',
           {
             "name": this.username,
-            "passwd":this.password,
+            "passwd":this.password
           })
           .then(function(response)
           {
-            switch(response.status){
-              case 200:
-                this.$emit('login',this.username,this.password);
+            switch(response.data.result){
+              case 0:
+              {
+                const user = this.username;
+                this.$store.dispatch('login', user);\
+                localStorage.setItem('username', user);
+                this.$router.push('/homepage');
                 break;
-              case 404:
+              }
+              default:
                 alert("用户名或密码错误，请检查后重试。");
-                break;
-              case 500:
-                alert("用户信息查询异常，请稍后重试。");
                 break;
             }
           })
-          .catch(function(){alert("网络异常，请稍后重试。");})
-
+          .catch(function(){alert("网络异常，请稍后重试。");})*/
     },
+
+
     register(){
       if(this.password!==this.confirmPassword)
       {
         alert("两次密码输入不一致！");
         return;
       }
-      //axios.get('/users/register/<code>')
-      //    .then(() =>{alert("注册成功！");this.isRegister=false;})
-      //    .catch(() =>alert("注册失败，请稍后重试！"))
-      axios.post('/users/register',
+      axios.post('{{base_url}}/users/register',
           {
             "name": this.username,
             "passwd":this.password,
@@ -118,7 +142,7 @@ export default {
             switch (response.status){
               case 200:
                 alert("注册成功！");
-                this.isRegister=false;
+                this.loginMode=1;
                 break;
               case 500:
                 alert("用户名已存在。");
