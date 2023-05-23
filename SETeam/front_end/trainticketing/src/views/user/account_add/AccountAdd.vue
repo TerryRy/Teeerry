@@ -31,6 +31,9 @@ export default {
   computed: {
     user() {
       return this.$store.getters.getUser;
+    },
+    jwt(){
+      return this.$store.getters.getJwt;
     }
   },
   data(){
@@ -45,47 +48,49 @@ export default {
     if (username) {
       this.$store.commit('setUser', username);
     }
+    const jwt = localStorage.getItem('jwt');
+    if(jwt){
+      this.$store.commit('setJwt', jwt);
+    }
   },
   methods:{
     addAccount()
     {
-      axios({
-        "method": "POST",
-        "header": [],
-        "body": {
-          "mode": "raw",
-          "raw": "{\r\n    \"account_name\": \"{{this.accountName}}\",\r\n    \"card_holder_name\": \"{{this.user}}\",\r\n    \"card_id\": \"{{this.accountID}}\"\r\n}",
-          "options": {
-            "raw": {
-              "language": "json"
-            }
-          }
-        },
-        "url": {
-          "raw": "{{base_url}}/accounts/",
-          "host": [
-            "{{base_url}}"
-          ],
-          "path": [
-            "accounts",
-            ""
-          ]
-        }
-      })
-          .then(function(response)
+      if(this.user==="null")
+      {
+        alert("登录已过期，请重新登录");
+        this.$store.dispatch('logout');
+        localStorage.setItem('username', null);
+        this.$router.push('/');
+        return;
+      }
+      if(this.accountName===null)
+      {
+        alert("请填写账户名称");
+      }
+      if(this.accountID===null)
+      {
+        alert("请填写银行卡号");
+      }
+      axios.post('api/accounts/',
           {
-            switch(response.data.result){
-              case 0:
-              {
-                alert("账户添加成功！")
-                break;
-              }
-              default:
-                alert("出现问题，请重试。");
-                break;
+            "account_name": this.accountName,
+            "card_holder_name": this.user,
+            "card_id": this.accountID
+          },{headers:{'jwt': `${this.jwt}`}})
+          .then(function(response){
+            if(response.data.result!==0)
+            {
+              alert(response.data.message);
+            }
+            else
+            {
+              alert("添加成功！");
             }
           })
-          .catch(function(){alert("网络异常，请稍后重试。");})
+          .catch(function(){
+            alert("网络错误，请稍后重试。");
+          })
       /*
       axios.post('{{base_url}}/accounts/',
           {
@@ -140,7 +145,9 @@ export default {
 
 #accountinput{
   position: fixed;
-  width: 1400px;
+  width: 200px;
+  padding-right: 600px ;
+  padding-left: 600px ;
   align-items:center;
   display: block;
   top:300px;

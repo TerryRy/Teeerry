@@ -30,11 +30,11 @@
         </tr>
         <tr>
           <th class="vertical-header">出发地</th>
-          <td>{{start}}</td>
+          <td>{{bill.schedule.departure_station.name}}</td>
         </tr>
         <tr>
           <th class="vertical-header">目的地</th>
-          <td>{{end}}</td>
+          <td>{{bill.schedule.destination_station.name}}</td>
         </tr>
         </tbody>
       </table>
@@ -52,6 +52,7 @@
 <script>
 import TopLine from "@/components/common/TopLine.vue";
 import NavLine from "@/components/common/NavLine.vue";
+import axios from "axios";
 
 export default {
   name: "OrderDetails",
@@ -82,10 +83,20 @@ export default {
   methods:{
     returnticket(bill)
     {
-      confirm("确定要退票吗？");
-      alert("哈哈，太着急了吧！");
-      alert(bill.seat_no);
-      this.$router.push('/orderlist');
+      axios.delete(`/api/schedules/tickets/${bill.id}`, {headers:{'jwt': `${this.jwt}`}})
+          .then((response)=>
+          {
+            switch (response.data.result){
+              case 0:
+                alert("退票成功！");
+                this.$router.push('/orderlist');
+                break;
+              default:
+                alert("出现一个问题……");
+            }
+          })
+          .catch(function (){alert("网络错误。")});
+
     }
   }
 

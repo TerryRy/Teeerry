@@ -7,23 +7,23 @@
     </div>
     <div id="secondFloor">
       <div id="money">
-        <div><h3>{{this.user}},您好!<br>您的账户情况如下:</h3></div>
-        <div><p>账户余额:{{money}}元</p></div>
-        <div><p>账户数量:{{amount}}</p></div>
+        <div><h3>{{this.user}},您好!<br>您共有{{accounts.length}}个账户</h3></div>
         <div>
           <a href="/accountadd"><button style="background-color: #f1f0f0; color: black; padding: 10px 20px; border: none; border-radius: 4px; font-size: 16px; cursor: pointer;" @click="add">添加账户</button></a>
         </div>
       </div>
       <div class="card-grid">
+        <p v-if="accounts.length===0">您还没有账户</p>
         <div class="card" v-for="account in accounts" :key="account.id" :style="getCardColor()">
           <div class="cardInfo">
-            <p3>{{account.name}}</p3>
-            <p>{{account.card_id}}</p>
+            <h3>{{account.name}}</h3>
+            <span>银行卡号：{{account.card_id}}</span><br>
+            <span>账户余额：{{account.amount}}</span>
           </div>
           <div>
             <button id="button2" @click="deposit(account)">充值</button>
             &nbsp;&nbsp;
-            <button id="button1" @click="deleteCard(account.id)">删除账户</button>
+            <button id="button1" @click="deleteCard(account)">删除账户</button>
           </div>
         </div>
       </div>
@@ -46,6 +46,9 @@ export default {
     },
     user() {
       return this.$store.getters.getUser;
+    },
+    jwt(){
+      return this.$store.getters.getJwt;
     }
   },
   data(){
@@ -66,7 +69,7 @@ export default {
         'rgba(213, 176, 252, 0.45)'
 
       ],
-      accounts:[
+      accounts:[]/*
         {
           "id": 1,
           "name": "account1",
@@ -127,7 +130,7 @@ export default {
           "amount": 50.00
         },
 
-        ]
+        ]*/
     }
   },
 
@@ -136,59 +139,43 @@ export default {
     if (username) {
       this.$store.commit('setUser', username);
     }
-    axios.get('{{base_url}}/accounts',
+    const jwt = localStorage.getItem('jwt');
+    if(jwt){
+      this.$store.commit('setJwt', jwt);
+    }
+    axios.get('api/accounts/',
         {
-
+          headers:{'jwt': `${this.jwt}`}
         })
-        .then(function(response)
+        .then((response)=>
         {
           this.accounts=response.data.accounts;
         })
-        .catch(function(){})
+        .catch(function(){alert("网络异常，请稍后重试！")})
   },
 
   methods:{
     // eslint-disable-next-line no-unused-vars
-    deleteCard(accountid)
+    deleteCard(account)
     {
-      const token = localStorage.getItem('jwtToken');
-      axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-      axios({
-        "method": "DELETE",
-        "body": {
-          "mode": "raw",
-          "raw": "",
-          "options": {
-            "raw": {
-              "language": "json"
-            }
-          }
-        },
-        "url": {
-          "raw": "{{base_url}}/accounts/{{accountid}}",
-          "host": [
-            "{{base_url}}"
-          ],
-          "path": [
-            "accounts",
-            "{{accountid}}"
-          ]
-        }
-      })
-        .then(function(response)
-        {
-          switch(response.data.result){
-            case 0:
+      axios.delete(`/api/accounts/${account.id}`,{headers:{'jwt': `${this.jwt}`}})
+          .then((response)=>
+          {
+            switch (response.data.result)
             {
-              break;
+              case 0:
+                alert("删除成功!");
+                break;
+              default:
+                alert("出现一些问题……");
             }
-            default:
-              alert("出现问题，请重试。");
-              break;
-          }
-        })
-        .catch(function(){alert("网络异常，请稍后重试。");})
-    },
+            this.$router.go(0);
+          })
+      .catch(function () {
+        alert("网络错误");
+      })
+    }
+    ,
     deposit(account)
     {
       this.$store.dispatch('storeAccount', account);
@@ -271,7 +258,7 @@ export default {
   left:750px;
   width:600px;
   display: grid;
-  grid-template-rows: repeat(3, 1fr); /* 三列网格 */
+  grid-template-rows: repeat(7, 1fr); /* 三列网格 */
   grid-gap: 3px; /* 网格之间的间距 */
   height: 500px;
   padding: 10px;
@@ -282,16 +269,18 @@ export default {
 .card {
   background-color: #fff;
   border: 1px solid #ccc;
-  padding: 20px;
-  text-align: center;
+  padding: 15px;
+  text-align: left;
   font-size: 16px;
-  height: 50px;
+  height: 100px;
   display: flex;
+  border-radius: 10px;
 }
 
 .cardInfo{
   width: 450px;
 }
+
 
 #button1{
   position: absolute;

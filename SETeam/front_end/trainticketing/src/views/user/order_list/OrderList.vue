@@ -10,6 +10,10 @@
     </div>
     <div id="secondFloor">
       <div class="bill-grid">
+        <p v-if="this.bills.length===0">您当前暂无订单，快去买票吧！</p>
+        <a href="/homepage">
+          <button v-if="this.bills.length===0" style="background-color: rgb(102,185,222); color: white; padding: 10px 20px; border: none; border-radius: 4px; font-size: 16px; cursor: pointer;">去买票</button>
+        </a>
         <div class="bill" v-for="bill in bills" :key="bill.id">
           <div class="billInfo">
             <p class="id">{{bill.id}}</p>
@@ -21,14 +25,13 @@
                 票价：{{bill.amount}}元
               </span><br>
               <span>
-                出发车站：&nbsp;&nbsp;
-                目的车站：
+                出发车站：{{bill.schedule.departure_station.name}}&nbsp;&nbsp;
+                目的车站：{{bill.schedule.destination_station.name}}
               </span>
             </div>
           </div>
             <button id="button2" v-if="bill.is_expired">删除</button>
             <button id="button1" @click="showdetails(bill)">详情</button>
-
         </div>
       </div>
     </div>
@@ -39,158 +42,56 @@
 import TopLine from "@/components/common/TopLine.vue";
 import NavLine from "@/components/common/NavLine.vue";
 import {toDisplayString} from "vue";
+//import axios from "axios";
 
 export default {
   name: "OrderList",
   components: {NavLine, TopLine},
+  computed: {
+    user() {
+      return this.$store.getters.getUser;
+    },
+    jwt(){
+      return this.$store.getters.getJwt;
+    }
+  },
   data(){
     return{
-      bills:[
-        {
-          "id": 1,
-          "amount": 80.00,
-          "create_time": "time1",
-          "is_expired": true,
-          "is_paid": true,
-          "is_schedule_modified": false,
-          "seat_no": 6,
-          "carriage": {
-            "id": 1,
-            "name": "C12"
-          },
-          "schedule": {
-            "id": 1,
-            "schedule_no": "S123",
-            "departure_time": "time3"
-          }
-        },
-        {
+      bills:[{
+        "id": 1,
+        "is_expired": false,
+        "schedule": {
           "id": 2,
-          "amount": 100.00,
-          "create_time": "time2",
-          "is_expired": false,
-          "is_paid": true,
-          "is_schedule_modified": false,
-          "seat_no": 5,
-          "carriage": {
+          "schedule_no": "S123Test",
+          "departure_time": "2023-05-04T00:00:00Z",
+          "departure_station": {
             "id": 1,
-            "name": "C12"
+            "station_no": "S001",
+            "name": "beijing"
           },
-          "schedule": {
-            "id": 1,
-            "schedule_no": "S123",
-            "departure_time": "time3"
+          "destination_station": {
+            "id": 4,
+            "station_no": "S534",
+            "name": "beijing west"
           }
         },
-        {
-          "id": 3,
-          "amount": 100.00,
-          "create_time": "time2",
-          "is_expired": false,
-          "is_paid": true,
-          "is_schedule_modified": false,
-          "seat_no": 5,
-          "carriage": {
-            "id": 1,
-            "name": "C12"
-          },
-          "schedule": {
-            "id": 1,
-            "schedule_no": "S123",
-            "departure_time": "time3"
-          }
+        "carriage": {
+          "id": 1,
+          "name": "C1"
         },
-        {
-          "id": 4,
-          "amount": 100.00,
-          "create_time": "time2",
-          "is_expired": false,
-          "is_paid": true,
-          "is_schedule_modified": false,
-          "seat_no": 5,
-          "carriage": {
-            "id": 1,
-            "name": "C12"
-          },
-          "schedule": {
-            "id": 1,
-            "schedule_no": "S123",
-            "departure_time": "time3"
-          }
+        "contact": {
+          "id": 1,
+          "name": "yangyitang",
+          "gender": "M",
+          "birthdate": null,
+          "id_card": "124343"
         },
-        {
-          "id": 5,
-          "amount": 100.00,
-          "create_time": "time2",
-          "is_expired": false,
-          "is_paid": true,
-          "is_schedule_modified": false,
-          "seat_no": 5,
-          "carriage": {
-            "id": 1,
-            "name": "C12"
-          },
-          "schedule": {
-            "id": 1,
-            "schedule_no": "S123",
-            "departure_time": "time3"
-          }
-        },
-        {
-          "id": 6,
-          "amount": 100.00,
-          "create_time": "time2",
-          "is_expired": false,
-          "is_paid": true,
-          "is_schedule_modified": false,
-          "seat_no": 5,
-          "carriage": {
-            "id": 1,
-            "name": "C12"
-          },
-          "schedule": {
-            "id": 1,
-            "schedule_no": "S123",
-            "departure_time": "time3"
-          }
-        },
-        {
-          "id": 7,
-          "amount": 100.00,
-          "create_time": "time2",
-          "is_expired": false,
-          "is_paid": true,
-          "is_schedule_modified": false,
-          "seat_no": 5,
-          "carriage": {
-            "id": 1,
-            "name": "C12"
-          },
-          "schedule": {
-            "id": 1,
-            "schedule_no": "S123",
-            "departure_time": "time3"
-          }
-        },
-        {
-          "id": 8,
-          "amount": 100.00,
-          "create_time": "time2",
-          "is_expired": false,
-          "is_paid": true,
-          "is_schedule_modified": false,
-          "seat_no": 5,
-          "carriage": {
-            "id": 1,
-            "name": "C12"
-          },
-          "schedule": {
-            "id": 1,
-            "schedule_no": "S123",
-            "departure_time": "time3"
-          }
-        }
-      ]
+        "amount": "52.75",
+        "create_time": "2023-05-05T22:23:55.416663Z",
+        "is_paid": false,
+        "is_schedule_modified": false,
+        "seat_no": 0
+      }]
     }
   },
   mounted() {
@@ -198,6 +99,15 @@ export default {
     if (username) {
       this.$store.commit('setUser', username);
     }
+    const jwt = localStorage.getItem('jwt');
+    if (jwt) {
+      this.$store.commit('setJwt', jwt);
+    }
+    /*axios.get('api/tickets/',{headers:{'jwt': `${this.jwt}`}})
+        .then((response) => { // 使用箭头函数
+          this.bills=response.data.tickets;
+        })
+        .catch(function(){alert("网络异常，请稍后重试。");})*/
   },
   methods:{
     toDisplayString,
