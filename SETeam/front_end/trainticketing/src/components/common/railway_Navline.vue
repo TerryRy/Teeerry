@@ -1,13 +1,14 @@
 <template>
     <nav>
         <ul>
-            <li id="leftblock"><a href="/trainadd" @click="turnToTrainAdd">添加车次</a></li>
+            <li id="leftblock"><a href="/workspace" @click="turnToWorkspace">列车时刻表</a></li>
             <li><a href="/stationadd" @click="turnToStationAdd">添加站点</a></li>
             <li><a href="/carriageadd" @click="turnToCarriageAdd">添加车厢</a></li>
-            <li><a href="/workspace" @click="turnToWorkspace">列车时刻表</a></li>
-            <li><a href="/traindelete" @click="turnToTrainDelete">删减车次</a></li>
-            <li><a href="/trainchange" @click="turnToTrainChange">修改车次</a></li>
-            <li id="rightblock"><a href="/" @click="logout">退出登录</a></li>
+
+<!--            <li><a href="/traindelete" @click="turnToTrainDelete">删减车次</a></li>-->
+            <li id="rightblock"><a href="/trainadd" @click="turnToTrainAdd">添加车次</a></li>
+<!--            <li ><a href="/trainchange" @click="turnToTrainChange">修改车次</a></li>-->
+<!--            <li id="rightblock"><a href="/" @click="logout">退出登录</a></li>-->
         </ul>
     </nav>
 </template>

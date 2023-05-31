@@ -1,121 +1,96 @@
 <template>
     <div id="topline"><TopLine/></div>
-    <div id="nav"><railway_Navline @turnToTrainAdd="turnToTrainAdd" @turnTrainDelete="turnTrainDelete" @turnTrainChange="turnTrainChange" @logout="logout"/></div>
+    <div id="nav"><railway_Navline @turnToWorkspace="turnToWorkspace" @turnToTrainAdd="turnToTrainAdd" @turnTrainChange="turnTrainChange" @logout="logout"/></div>
     <div class="container">
         <h2>列车时刻表</h2>
         <div class="schedule-list">
-            <div v-for="schedule in schedules" :key="schedule.id" class="schedule-item">
-                <h3>{{ schedule.schedule_no }}</h3>
-                <p>出发时间: {{ schedule.departure_time }}</p>
-                <div class="stations">
-                    <h4>站点信息:</h4>
-                    <ul>
-                        <li v-for="station in schedule.stations" :key="station.id">
-                            <span>{{ station.station_no }}</span>
-                            <span>{{ station.name }}</span>
-                        </li>
-                    </ul>
-                </div>
-                <div class="carriages">
-                    <h4>车厢信息:</h4>
-                    <ul>
-                        <li v-for="carriage in schedule.carriage" :key="carriage.carriage.id">
-                            <span>{{ carriage.carriage.name }}</span>
-                            <span>座位数: {{ carriage.carriage.seat_num }}</span>
-                            <span>数量: {{ carriage.num }}</span>
-                        </li>
-                    </ul>
-                </div>
-            </div>
+            <el-table :data="schedules" style="width: 100%">
+                <el-table-column prop="schedule_no" label="车次编号"></el-table-column>
+                <el-table-column prop="departure_time" label="出发时间"></el-table-column>
+                <el-table-column label="站点信息">
+                    <template v-slot="{ row }">
+                        <ul>
+                            <li v-for="station in row.stations" :key="station.station.id">
+                                <span>{{ station.station.station_no }}</span>
+                                <span>{{ station.station.name }}</span>
+                            </li>
+                        </ul>
+                    </template>
+                </el-table-column>
+                <el-table-column label="操作">
+                    <template v-slot="{ row }">
+                        <el-button @click="deleteTrain(row.id)" type="text" class="red">删除车次</el-button>
+                        <el-button @click="changeTrain(row.id)" type="text" class="green">调整车次</el-button>
+                    </template>
+                </el-table-column>
+            </el-table>
         </div>
     </div>
 </template>
 
 <script>
-import { ref } from 'vue';
 import TopLine from "@/components/common/TopLine.vue";
 import railway_Navline from "@/components/common/railway_Navline.vue";
+import axios from "axios";
+import depositMoney from "@/views/user/deposit_money/DepositMoney.vue";
 export default {
-    setup() {
-        const schedules = ref([]);
-
-        // 假设通过接口获取到的时刻表数据为response
-        const response = {
-            schedules: [
-                {
-                    id: 1,
-                    schedule_no: "K1234",
-                    departure_time: "2023-5-4-11:11:00",
-                    stations: [
-                        {
-                            id: 1,
-                            station_no: "S534",
-                            name: "beijing"
-                        },
-                        {
-                            id: 2,
-                            station_no: "S764",
-                            name: "shanghai"
-                        },
-                        {
-                            id: 1,
-                            station_no: "S534",
-                            name: "beijing"
-                        },
-                        {
-                            id: 1,
-                            station_no: "S534",
-                            name: "beijing"
-                        },
-                        {
-                            id: 1,
-                            station_no: "S534",
-                            name: "beijing"
-                        },
-                        {
-                            id: 1,
-                            station_no: "S534",
-                            name: "beijing"
-                        },
-
-                    ],
-                    carriage: [
-                        {
-                            carriage: {
-                                id: 1,
-                                name: "C1233",
-                                seat_num: 120
-                            },
-                            num: 5
-                        },
-                        {
-                            carriage: {
-                                id: 2,
-                                name: "C1243",
-                                seat_num: 30
-                            },
-                            num: 2
-                        }
-                    ]
-                },
-            ]
-        };
-
-        // 在mounted钩子中将response中的数据赋值给schedules
-        const mounted = () => {
-            schedules.value = response.schedules;
-        };
-
-        return {
-            schedules,
-            mounted
-        };
-    },
-    mounted() {
-        this.mounted();
-    },
     name: "WorkSpace",
-    components: {railway_Navline, TopLine}
+    components: {railway_Navline, TopLine},
+    data() {
+        return {
+            schedules:[]
+        }
+    },
+    mounted(){
+        const jwt = localStorage.getItem('jwt');
+        if(jwt){
+            this.$store.commit('setJwt', jwt);
+        }
+        axios.get('api/schedules/',
+            {
+                headers:{'jwt': `${this.jwt}`}
+            })
+            .then((response)=>
+            {
+                this.schedules=response.data.schedules;
+            })
+    },
+    computed: {
+        depositMoney() {
+            return depositMoney
+        },
+        user() {
+            return this.$store.getters.getUser;
+        },
+        jwt(){
+            return this.$store.getters.getJwt;
+        }
+    },
+    methods :{
+        deleteTrain(id) {
+            axios.delete(`/api/schedules/${id}`,{headers:{'jwt': `${this.jwt}`}})
+                .then((response)=>
+                {
+                    switch (response.data.result)
+                    {
+                        case 0:
+                            alert("删除成功!");
+                            break;
+                        default:
+                            alert("出现一些问题……");
+                    }
+                    this.$router.go(0);
+                })
+                .catch(function () {
+                    alert("网络错误");
+                })
+        },
+        changeTrain(schedule_id){
+            this.$store.dispatch('storeSchedule_id', schedule_id);
+            localStorage.setItem('schedule_id', schedule_id);
+            this.$router.push('/trainchange')
+        }
+    }
 };
 </script>
 
@@ -146,6 +121,16 @@ export default {
 .stations li,
 .carriages li {
     margin-bottom: 10px;
+}
+
+.green {
+    background-color: green;
+    color: white;
+}
+
+.red {
+    background-color: red;
+    color: white;
 }
 
 .carriages span {

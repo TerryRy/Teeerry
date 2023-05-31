@@ -6,27 +6,52 @@
         <div class="form-container">
             <form @submit.prevent="submitForm">
                 <label for="scheduleNo">车次编号：</label>
-                <input type="text" id="scheduleNo" v-model="scheduleNo" required>
+                <input type="text" id="scheduleNo" v-model="schedule.scheduleNo" required>
 
                 <label for="stationIds">车站编号：</label>
-                <input type="text" id="stationIds" v-model="stationIds" required>
+                <div v-for="(fieldIndex, index) in stationFields" :key="index">
+                    <div class="button-container">
+                        <select v-model="schedule.stationIds[fieldIndex]" id="select-box" style="width: 320px; padding: 10px">
+                            <option :value="station.id" v-for="station in stations" :key="station.id">{{ station.name }}</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="button-container">
+                    <input type="button" value="增加车站" @click="addStationField()" style="background-color: #4CAF50; color: white; padding: 10px 20px; border: none; border-radius: 4px; font-size: 16px; cursor: pointer;"/>
+                    <span class="button-spacing"></span>
+                    <input type="button" value="删除车站" @click="deleteStationField()" style="background-color: #4CAF50; color: white; padding: 10px 20px; border: none; border-radius: 4px; font-size: 16px; cursor: pointer;"/>
+                </div>
 
                 <label for="carriageIds">车厢编号：</label>
-                <input type="text" id="carriageIds" v-model="carriageIds" required>
+                <div v-for="(fieldIndex, index) in carriageFields" :key="index">
+                    <div class="button-container">
+                        <select v-model="schedule.carriageIds[fieldIndex]" id="select-box" style="width: 320px; padding: 10px">
+                            <option :value="carriage.id" v-for="carriage in carriages" :key="carriage.id">{{ carriage.name }}</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="button-container">
+                    <input type="button" value="增加车厢" @click="addCarriageField()" style="background-color: #4CAF50; color: white; padding: 10px 20px; border: none; border-radius: 4px; font-size: 16px; cursor: pointer;"/>
+                    <span class="button-spacing"></span>
+                    <input type="button" value="删除车厢" @click="deleteCarriageField()" style="background-color: #4CAF50; color: white; padding: 10px 20px; border: none; border-radius: 4px; font-size: 16px; cursor: pointer;"/>
+                </div>
 
                 <label for="departureTime">出发时间：</label>
-                <input type="datetime-local" id="departureTime" v-model="departureTime" required>
+                <input type="datetime-local" id="departureTime" v-model="schedule.departureTime" required>
 
                 <label for="arrivalTimes">到达时间：</label>
-                <div v-for="(arrivalTime, index) in arrivalTimes" :key="index">
-                    <input type="datetime-local" v-model="arrivalTimes[index]" required>
+                <div v-for="(arrivalTime, index) in schedule.arrivalTimes" :key="index">
+                    <input type="datetime-local" v-model="schedule.arrivalTimes[index]" required>
                 </div>
 
                 <div class="button-container">
-                    <button type="button" @click="addArrivalTimeField()">增加到达时间</button>
+                    <input type="button" value="增加到达时间" @click="addArrivalTimeField()" style="background-color: #4CAF50; color: white; padding: 10px 20px; border: none; border-radius: 4px; font-size: 16px; cursor: pointer;" />
+                    <span class="button-spacing"></span>
+                    <input type="button" value="删除到达时间" @click="deleteArrivalTimeField()" style="background-color: #4CAF50; color: white; padding: 10px 20px; border: none; border-radius: 4px; font-size: 16px; cursor: pointer;"/>
                 </div>
 
-                <button type="submit">添加车次</button>
+                <input type="button" value="添加车次" @click="addTrain" style="background-color: #4CAF50; color: white; padding: 10px 20px; border: none; border-radius: 4px; font-size: 16px; cursor: pointer;"/>&nbsp;&nbsp;
+                <div v-if="errorMessage" class="error-message">{{ errorMessage }}</div>
             </form>
         </div>
     </div>
@@ -35,39 +60,132 @@
 <script>
 import TopLine from "@/components/common/TopLine.vue";
 import railway_Navline from "@/components/common/railway_Navline.vue";
+import axios from "axios";
 
 export default {
     components: {railway_Navline, TopLine},
+    computed: {
+        user() {
+            return this.$store.getters.getUser;
+        },
+        jwt(){
+            return this.$store.getters.getJwt;
+        }
+    },
     data() {
         return {
-            scheduleNo: '',
-            stationIds: '',
-            carriageIds: '',
-            departureTime: '',
-            arrivalTimes: [''],
+            schedule: {
+                scheduleNo: '',
+                stationIds: [''],
+                carriageIds: [''],
+                departureTime: '',
+                arrivalTimes: [''],
+            },
+            stationFields: [0],
+            carriageFields:[0],
+            stations:[],
+            carriages:[],
         };
     },
+    mounted() {
+        const username = localStorage.getItem('username');
+        if (username) {
+            this.$store.commit('setUser', username);
+        }
+        const jwt = localStorage.getItem('jwt');
+        if(jwt){
+            this.$store.commit('setJwt', jwt);
+        }
+        axios.get('api/schedules/stations',
+            {
+                headers:{'jwt': `${this.jwt}`}
+            })
+            .then((response)=>
+            {
+                this.stations=response.data.stations;
+            })
+        axios.get('api/schedules/carriages',
+            {
+                headers:{'jwt': `${this.jwt}`}
+            })
+            .then((response)=>
+            {
+                this.carriages=response.data.carriages;
+            })
+    },
     methods: {
-        submitForm() {
-            /*const newSchedule = {
-                schedule_no: this.scheduleNo,
-                station_ids: this.stationIds.split(',').map(id => parseInt(id.trim())),
-                carriage_ids: this.carriageIds.split(',').map(id => parseInt(id.trim())),
-                departure_time: this.departureTime,
-                arrival_times: this.arrivalTimes,
-            };*/
-
-            // Perform API request to add the schedule using newSchedule object
-
-            // Reset form fields after successful submission
-            this.scheduleNo = '';
-            this.stationIds = '';
-            this.carriageIds = '';
-            this.departureTime = '';
-            this.arrivalTimes = [''];
-        },
         addArrivalTimeField(index) {
-            this.arrivalTimes.splice(index + 1, 0, '');
+            this.schedule.arrivalTimes.splice(index + 1, 0, '');
+        },
+        deleteArrivalTimeField(index) {
+            this.schedule.arrivalTimes.splice(index , 1);
+        },
+        addStationField() {
+            const lastIndex = this.stationFields[this.stationFields.length - 1];
+            this.stationFields.push(lastIndex + 1);
+            this.schedule.stationIds.push('');
+        },
+        deleteStationField() {
+            this.stationFields.splice(this.stationFields.length - 1, 1);
+            this.schedule.stationIds.splice(this.schedule.stationIds.length - 1, 1);
+        },
+        addCarriageField() {
+            const lastIndex = this.carriageFields[this.carriageFields.length - 1];
+            this.carriageFields.push(lastIndex + 1);
+            this.schedule.carriageIds.push('');
+        },
+        deleteCarriageField() {
+            this.carriageFields.splice(this.carriageFields.length - 1, 1);
+            this.schedule.carriageIds.splice(this.schedule.carriageIds.length - 1, 1);
+        },
+        addTrain() {
+            if(this.user==="null"){
+                alert("登录已过期，请重新登录");
+                this.$store.dispatch('logout');
+                localStorage.setItem('username', null);
+                this.$router.push('/');
+                return;
+            }
+            if(this.schedule.scheduleNo==='') {
+                alert("请填写车次编号");
+            }
+            if(this.schedule.stationIds===null) {
+                alert("请填写车站编号");
+            }
+            if(this.schedule.carriageIds===null) {
+                alert("请填写车厢编号");
+            }
+            if(this.schedule.departureTime===null) {
+                alert("请填写出发时间");
+            }
+            if(this.schedule.arrivalTimes===null) {
+                alert("请填写到达时间");
+            }
+            if(this.schedule.arrivalTimes[0]!==this.schedule.departureTime) {
+                alert("请确保第一个到达时间与出发时间相同");
+            }
+             if(this.stationFields.length!==this.schedule.arrivalTimes.length){
+                 alert("请保证站点数量与到达时间对应");
+             }
+            axios.post('api/schedules/',
+                {
+                    "schedule_no":this.schedule.scheduleNo,
+                    "station_ids":this.schedule.stationIds,
+                    "carriage_ids":this.schedule.carriageIds,
+                    "departure_time":this.schedule.departureTime,
+                    "arrival_times":this.schedule.arrivalTimes
+                },{headers:{'jwt': `${this.jwt}`}})
+                .then(function(response){
+                    if(response.data.result!==0) {
+                        alert(response.data.message);
+                    }
+                    else {
+                        alert("添加成功！");
+                    }
+                })
+                .catch(function(){
+                    alert("网络错误，请稍后重试。");
+                })
         }
     }
 }
@@ -87,6 +205,12 @@ export default {
     overflow-y: auto;
 }
 
+.green {
+    background-color: white;
+    color: green;
+}
+
+
 label {
     display: block;
     margin-bottom: 20px;
@@ -94,9 +218,9 @@ label {
 
 input[type="text"],
 input[type="datetime-local"] {
-    width: 100%;
-    padding: 20px;
-    font-size: 16px;
+    width: 90%;
+    padding: 10px;
+    font-size: 14px;
     border-radius: 4px;
     border: 1px solid #ccc;
     box-sizing: border-box;
@@ -115,6 +239,12 @@ button {
     border-radius: 4px;
     cursor: pointer;
     margin-top: 5px;
+}
+
+
+
+.button-spacing {
+    margin-left: 10px;
 }
 </style>
 

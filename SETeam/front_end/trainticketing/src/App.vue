@@ -13,7 +13,7 @@
 <script>
 //import WelcomePage from "@/views/welcome_page/WelcomePage.vue";
 //import HomePage from "@/views/user/homepage/HomePage.vue";
-import '@/assets/css/backgroundimage.css'
+// import '@/assets/css/backgroundimage.css'
 //import AccountAdd from "@/views/user/account_add/AccountAdd.vue";
 //import AccountManage from "@/views/user/account_manage/AccountManage.vue";
 //import DepositMoney from "@/views/user/deposit_money/DepositMoney.vue";
@@ -32,12 +32,13 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
-  margin-top: 60px;
+  margin-top: 0px;
 }
 #content{
   position: absolute;
   border-top: 0px;
   padding-top: 0px;
+  margin-top: 0px;
   top:0px;
   width:100%;
 }

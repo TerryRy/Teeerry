@@ -30,21 +30,24 @@
         </tr>
         <tr>
           <th class="vertical-header">出发地</th>
-          <td>{{start}}</td>
+          <td>{{bill.ori_station.name}}</td>
         </tr>
         <tr>
           <th class="vertical-header">目的地</th>
-          <td>{{end}}</td>
+          <td>{{bill.dst_station.name}}</td>
         </tr>
         </tbody>
       </table>
       <div id="buttons">
-        <button style="background-color: #f6bf0b; color: white; padding: 10px 20px; border: none; border-radius: 4px; font-size: 16px; cursor: pointer;" @click="returnticket(bill)"  v-if="!(bill.is_expired)">退票</button>
+        <button style="background-color: #f6bf0b; color: white; padding: 10px 20px; border: none; border-radius: 4px; font-size: 16px; cursor: pointer;" @click="returnticket(bill)"  v-if="(checktime(bill.schedule.departure_time)&&(bill.is_paid))">退票</button>
         &nbsp;
-        <a href="/ticketchangechoice"><button style="background-color: #24c6e3; color: white; padding: 10px 20px; border: none; border-radius: 4px; font-size: 16px; cursor: pointer;"  v-if="!(bill.is_expired)">改签</button></a>
+        <button @click="changeticket(bill)" style="background-color: #24c6e3; color: white; padding: 10px 20px; border: none; border-radius: 4px; font-size: 16px; cursor: pointer;"  v-if="(checktime(bill.schedule.departure_time)&&(bill.is_paid))">改签</button>
         &nbsp;
         <a href="/orderlist"><button style="background-color: rgba(49,79,222,0.21); color: white; padding: 10px 20px; border: none; border-radius: 4px; font-size: 16px; cursor: pointer;">返回</button></a>
       </div>
+    </div>
+    <div class="footer">
+      <p>&copy; 2023 畅游中国. All rights reserved. | 联系电话: 15566293351</p>
     </div>
   </div>
 </template>
@@ -52,6 +55,8 @@
 <script>
 import TopLine from "@/components/common/TopLine.vue";
 import NavLine from "@/components/common/NavLine.vue";
+import axios from "axios";
+import {ElMessage} from "element-plus";
 
 export default {
   name: "OrderDetails",
@@ -62,16 +67,15 @@ export default {
     },
     username(){
       return this.$store.getters.getUser;
+    },
+    jwt(){
+      return this.$store.getters.getJwt;
     }
   },
   mounted() {
     const username = localStorage.getItem('username');
     if (username) {
       this.$store.commit('setUser', username);
-    }
-    const bill = localStorage.getItem('Bill');
-    if(bill) {
-      this.$store.commit('setBill',bill);
     }
   },
   data(){
@@ -82,10 +86,32 @@ export default {
   methods:{
     returnticket(bill)
     {
-      confirm("确定要退票吗？");
-      alert("哈哈，太着急了吧！");
-      alert(bill.seat_no);
-      this.$router.push('/orderlist');
+      axios.delete(`/api/tickets/${bill.id}`, {headers:{'jwt': `${this.jwt}`}})
+          .then((response)=>
+          {
+            switch (response.data.result){
+              case 0:
+                ElMessage({message:response.data.message,type:'success'});
+                this.$router.push('/orderlist');
+                break;
+              default:
+                ElMessage.error(response.data.message);
+            }
+          })
+          .catch(()=>{ElMessage.error("出现一点问题……");})
+    },
+    changeticket()
+    {
+      this.$store.commit('setTicketID', this.bill.id);
+      localStorage.setItem('ticketID',this.bill.id);
+      this.$router.push('/ticketchangechoice');
+    },
+    checktime(time) {
+      let currentTime = new Date();
+      let inputDate = new Date(time);
+
+      // 比较输入时间是否超过一小时
+      return inputDate.getTime() > currentTime.getTime() + 60 * 60 * 1000;
     }
   }
 
@@ -94,30 +120,27 @@ export default {
 
 <style scoped>
 #topline{
-  position: fixed;
-  z-index: 9999;
+  position: relative;
 }
 #nav{
-  position: fixed;
-  z-index: 9999;
+  position: relative;
 }
 
 #mainBlock{
   margin:0 auto;
   background-color: rgba(255, 255, 255, 0.8);
   top:150px;
-  width:1400px;
-  height: 100vh;
+  width:100%;
   text-align: center;
   z-index: 10;
 }
 
 #introduceWord{
-  position: fixed;
-  width:1400px;
+  position: relative;
+  width:100%;
   align-items:center;
   display: block;
-  top:200px;
+  top:50px;
 }
 
 #introduceWord p{
@@ -127,20 +150,18 @@ export default {
 }
 
 #secondFloor{
-  position: fixed;
-  top:300px;
+  position: relative;
+  top:50px;
   padding: 0;
   margin: 0;
-  display: flex;
 }
 
 table {
   border-collapse: collapse;
   width: 800px;
-  margin-left: 300px;
-  margin-right: 300px;
+  margin: 0 auto;
   padding-top: 50px;
-  position: absolute;
+  position: relative;
 }
 
 th, td {
@@ -162,7 +183,32 @@ td{
 
 #buttons{
   position: relative;
-  width: 1400px;
-  top:350px;
+  width: 100%;
+  margin: 0 auto;
+  top:50px;
+}
+
+.footer p {
+  margin: 0;
+  font-size: 14px;
+}
+
+.footer a {
+  color: #fff;
+  text-decoration: none;
+  margin-left: 10px;
+}
+
+.footer {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 80px; /* 底边栏的高度 */
+  background-color: #333;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 </style>

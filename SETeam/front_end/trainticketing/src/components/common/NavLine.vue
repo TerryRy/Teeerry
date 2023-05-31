@@ -1,27 +1,43 @@
 <template>
   <nav>
     <ul>
-      <li id="leftblock"><a href="/homepage" @click="turnToTicketBooking">车次查询</a></li>
-      <li><a href="/orderlist" @click="turnToBillsManage">订单管理</a></li>
-      <li><a href="/accountmanage" @click="turnToAccountManage">账户管理</a></li>
-      <li><a href="/personalcenter" @click="turnToPersonalCenter">个人中心</a></li>
-      <li id="rightblock"><a @click="logout">退出登录</a></li>
+      <li id="leftblock"><a href="/">首页</a></li>
+
+      <li><a @click="turnto('/orderlist')">订单管理</a></li>
+      <li><a @click="turnto('/accountmanage')">账户管理</a></li>
+      <li id="rightblock"><a @click="turnto('/personalcenter')">联系人管理</a></li>
+<!--      <li @click="dialogTableVisible = true">登录</li>-->
+<!--      <li id="rightblock"><a @click="logout">退出登录</a></li>-->
     </ul>
   </nav>
 </template>
 
 <script>
+import {ElMessage} from "element-plus";
+import "@/assets/css/button.css";
+
 export default {
   name: "NavLine",
-  methods:{
-    logout(){
-      if(confirm('确定要退出登录吗?'))
-      {
-        this.$store.dispatch('logout');
-        localStorage.setItem('username', null);
-        this.$router.push('/');
-      }
+  computed: {
+    user() {
+      return this.$store.getters.getUser;
+    },
+    jwt(){
+      return this.$store.getters.getJwt;
+    },
+    isnotlogin(){
+      return this.jwt==="null"||this.jwt===null;
     }
+  },
+  methods:{
+    turnto(url){
+      if(this.isnotlogin)
+      {
+        ElMessage({message:"请先登录",type:'warning'});
+      }
+      else this.$router.push(url);
+    }
+
   }
 }
 </script>
@@ -32,8 +48,7 @@ export default {
     color: #fff;
     font-size: 18px;
     font-weight: bold;
-    position:fixed;
-    top:80px;
+    position:relative;
     width: 100%;
   }
 

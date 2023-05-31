@@ -5,11 +5,11 @@
     <div id="Dev">
       <form id="register-form" v-if="loginMode===0">
         <h3>注册</h3>
-        <input class="scn" type="text" placeholder="用户名" v-model="username"/><br><br>
-        <input class="scn" type="password" placeholder="密码" v-model="password"/><br><br>
+        <input class="scn" type="text" placeholder="用户名(2-10个字符)" v-model="username"/><br><br>
+        <input class="scn" type="password" placeholder="密码(6-10个字符)" v-model="password"/><br><br>
         <input class="scn" type="password" placeholder="确认密码" v-model="confirmPassword"/><br><br>
         <input class="scn" type="email" placeholder="邮箱" v-model="email"/><br><br>
-        <input type="submit" value="注册" @click="register" style="background-color: rgba(102,185,222,1); color: white; padding: 10px 20px; border: none; border-radius: 4px; font-size: 16px; cursor: pointer;"/>
+        <input type="button" value="注册" @click="register" style="background-color: rgba(102,185,222,1); color: white; padding: 10px 20px; border: none; border-radius: 4px; font-size: 16px; cursor: pointer;"/>
         <p>
           已有账号？<a href="#" @click="toggleForm(1)">去登录</a>
         </p>
@@ -24,7 +24,7 @@
         <p>
           没有账号？<a href="#" @click="toggleForm(0)">去注册</a>
         </p>
-        <input type="button" value="系统管理员入口" @click="toggleForm(2)" style="background-color: rgba(102,185,222,1); color: white; padding: 10px 20px; border: none; border-radius: 4px; font-size: 16px; cursor: pointer;"/>
+        <input type="button" value="系统管理员入口" @click="toggleForm(2)" style="background-color: rgba(102,185,222,1); color: white; padding: 10px 20px; border: none; border-radius: 4px; font-size: 16px; cursor: pointer;" />
         &nbsp;&nbsp;
         <input type="button" value="铁路系统员入口" @click="toggleForm(3)" style="background-color: rgb(7,231,145); color: white; padding: 10px 20px; border: none; border-radius: 4px; font-size: 16px; cursor: pointer;"/>
         <div v-if="errorMessage" class="error-message">{{ errorMessage }}</div>
@@ -57,6 +57,7 @@
 
 import axios from 'axios'
 import TopLine from "@/components/common/TopLine.vue";
+import {ElMessage, ElMessageBox} from "element-plus";
 export default {
   name: "WelcomePage",
   components: {TopLine},
@@ -72,10 +73,12 @@ export default {
     return{
       //登录模式：0-注册，1-用户登录，2-系统管理员登录，3-铁路系统员登录
       loginMode : 1, //默认的初始界面就是用户登录界面
+
+      //注册登录时涉及的用户信息，初始化为null
       username : null,
       password : null,
-      email:null,
-      confirmPassword:null
+      confirmPassword:null,
+      email:null
     }
     },
   methods:{
@@ -84,161 +87,154 @@ export default {
       this.loginMode=mode;
     },
 
-    //用户登录
-    login(){
-      if(this.username==null)
-      {
-        alert("用户名不能为空！");
-        return;
-      }
-      if(this.password==null)
-      {
-        alert("密码不能为空！");
-        return;
-      }
-      const user = this.username;
-      alert(user);
-      this.$store.dispatch('login', user);
-      localStorage.setItem('username', user);
-      this.$router.push('/homepage');
-      /*
-      axios.post('{{base_url}}/users/login',
-          {
-            "name": this.username,
-            "passwd":this.password
-          })
-          .then(function(response)
-          {
-            switch(response.data.result){
-              case 0:
-              {
-                const user = this.username;
-                this.$store.dispatch('login', user);\
-                localStorage.setItem('username', user);
-                this.$router.push('/homepage');
-                break;
-              }
-              default:
-                alert("用户名或密码错误，请检查后重试。");
-                break;
-            }
-          })
-          .catch(function(){alert("网络异常，请稍后重试。");})*/
-    },
-
-    //注册
+    /*0-普通用户注册*/
     register(){
+      //要求用户名为2-10个字符
+      if (!(this.username.length >= 2 && this.username.length <= 10))
+      {
+        ElMessageBox.alert("用户名应为2-10个字符！");
+        return;
+      }
+
+      //确保密码一致
       if(this.password!==this.confirmPassword)
       {
-        alert("两次密码输入不一致！");
+        ElMessageBox.alert("两次密码输入不一致！");
         return;
       }
-      axios.post('{{base_url}}/users/register',
+
+      //要求密码必须是6-10位字符
+      if (!(this.password.length >= 6 && this.password.length <= 10))
+      {
+        ElMessageBox.alert("密码应为6-10个字符！");
+        return;
+      }
+
+      axios.post('/api/users/register',
           {
             "name": this.username,
             "passwd":this.password,
             "email":this.email
           })
           .then(function(response){
-            switch (response.status){
-              case 200:
-                alert("注册成功！");
-                this.loginMode=1;
-                break;
-              case 500:
-                alert("用户名已存在。");
-                break;
-              case 501:
-                alert("服务器错误，请稍后重试。");
-                break;
-            }
+            if(response.data.result===0)
+            ElMessage({message: response.data.message,type:'success'});
+            else
+              ElMessage({message: response.data.message,type:'warning'});
+              this.toggleForm(1); //切换到用户登录模式
           })
-          .catch(function(){
-            alert("网络错误，请稍后重试。");
-          })
+          .catch(error => {
+                // 处理请求过程中的错误
+                console.error('请求出错：', error);
+
+                // 检查错误的类型
+                if (error.response) {
+                  // 服务器返回错误状态码
+                  console.error('响应状态码：', error.response.status);
+                  console.error('响应数据：', error.response.data);
+                } else if (error.request) {
+                  // 请求已发送但没有收到响应
+                  console.error('没有收到响应');
+                } else {
+                  // 发送请求时发生了错误
+                  console.error('请求发送失败：', error.message);
+                }})
     },
 
+    //1-普通用户登录函数
+    login(){
+      if(this.username==null)
+      {
+        ElMessage.error("用户名不能为空！");
+        return;
+      }
+      if(this.password==null)
+      {
+        ElMessage.error("密码不能为空！");
+        return;
+      }
+      //const user = this.username;
+      //this.$store.dispatch('login', user);
+      //localStorage.setItem('username', user);
+      //this.$router.push('/homepage');
+      axios.post('/api/users/login',
+          {
+            "name": this.username,
+            "passwd":this.password
+          })
+          .then((response) => { // 使用箭头函数
+          if (response.data.result !== 0)
+          {
+            ElMessage.error(response.data.message);
+            return;
+          }
+          else
+          {
+            ElMessage({message:response.data.message,type:'success'});
+          }
+          const user = this.username;
+          const jwt = response.data.jwt;
+          this.$store.dispatch('login', user, jwt);
+          localStorage.setItem('username', user);
+          localStorage.setItem('jwt', jwt);
+          this.$router.push('/homepage');
+        })
+          .catch(function(){ElMessage.error("网络异常，请稍后重试。");})
+    },
 
+    //2-系统管理员登录函数
     system_admin_login(){
       if(this.username==null)
       {
-        alert("用户名不能为空！");
+        ElMessage.error("用户名不能为空！");
         return;
       }
       if(this.password==null)
       {
-        alert("密码不能为空！");
+        ElMessage.error("密码不能为空！");
         return;
       }
-      const user = this.username;
-      this.$store.dispatch('login', user);
-      localStorage.setItem('username', user);
-      this.$router.push('/userinfomanage');
-      /*
-      axios.post('{{base_url}}/users/login',
+      //const user = this.username;
+      //this.$store.dispatch('login', user);
+      //localStorage.setItem('username', user);
+      //this.$router.push('/homepage');
+      axios.post('/api/users/login',
           {
             "name": this.username,
             "passwd":this.password
           })
-          .then(function(response)
-          {
-            switch(response.data.result){
-              case 0:
-              {
-                const user = this.username;
-                this.$store.dispatch('login', user);\
-                localStorage.setItem('username', user);
-                this.$router.push('/homepage');
-                break;
-              }
-              default:
-                alert("用户名或密码错误，请检查后重试。");
-                break;
-            }
+          .then((response) => { // 使用箭头函数
+            if (response.data.result !== 0) return;
+            const user = this.username;
+            const jwt = response.data.jwt;
+            if(jwt===null||jwt===undefined) return;
+            this.$store.dispatch('login', user, jwt);
+            localStorage.setItem('username', user);
+            localStorage.setItem('jwt', jwt);
+            this.$router.push('/userinfomanage');
           })
-          .catch(function(){alert("网络异常，请稍后重试。");})*/
+          .catch(function(){ElMessage.error("网络异常，请稍后重试。");})
     },
 
-    //铁路系统员登录
+    //3-铁路系统员登录函数
     rail_admin_login(){
-      if(this.username==null)
-      {
-        alert("用户名不能为空！");
-        return;
-      }
-      if(this.password==null)
-      {
-        alert("密码不能为空！");
-        return;
-      }
-      const user = this.username;
-      this.$store.dispatch('login', user);
-      localStorage.setItem('username', user);
-      this.$router.push('/workspace');
-      /*
-      axios.post('{{base_url}}/users/login',
+      axios.post('/api/users/login',
           {
             "name": this.username,
             "passwd":this.password
           })
-          .then(function(response)
-          {
-            switch(response.data.result){
-              case 0:
-              {
-                const user = this.username;
-                this.$store.dispatch('login', user);\
-                localStorage.setItem('username', user);
-                this.$router.push('/homepage');
-                break;
-              }
-              default:
-                alert("用户名或密码错误，请检查后重试。");
-                break;
-            }
+          .then((response) => { // 使用箭头函数
+            if (response.data.result !== 0) return;
+            const user = this.username;
+            const jwt = response.data.jwt;
+            this.$store.dispatch('login', user, jwt);
+            localStorage.setItem('username', user);
+            localStorage.setItem('jwt', jwt);
+            this.$router.push('/workspace');
           })
-          .catch(function(){alert("网络异常，请稍后重试。");})*/
+          .catch(function(){ElMessage.error("网络异常，请稍后重试。");})
     },
+
   }
 }
 </script>
@@ -268,12 +264,14 @@ export default {
     display: flex;
     flex-wrap:wrap;
   }
+
   #input{
     position: absolute;
     width:100%;
     align-items:center;
     top:300px;
   }
+
   #Dev{
     font-size: 25px;
     margin: 30px;
@@ -317,6 +315,8 @@ export default {
     border: none;
     height: 30px;
     border-radius: 5px;
+    padding: 2px;
+    width: 300px;
   }
 
   input::placeholder {

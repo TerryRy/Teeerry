@@ -7,26 +7,42 @@
     </div>
     <div id="secondFloor">
       <div id="money">
-        <div><h3>{{this.user}},您好!<br>您的账户情况如下:</h3></div>
-        <div><p>账户余额:{{money}}元</p></div>
-        <div><p>账户数量:{{amount}}</p></div>
+        <div><h3>{{this.user}},您好!<br>您共有{{accounts.length}}个账户</h3></div>
         <div>
           <a href="/accountadd"><button style="background-color: #f1f0f0; color: black; padding: 10px 20px; border: none; border-radius: 4px; font-size: 16px; cursor: pointer;" @click="add">添加账户</button></a>
         </div>
       </div>
       <div class="card-grid">
-        <div class="card" v-for="account in accounts" :key="account.id" :style="getCardColor()">
-          <div class="cardInfo">
-            <p3>{{account.name}}</p3>
-            <p>{{account.card_id}}</p>
-          </div>
-          <div>
-            <button id="button2" @click="deposit(account)">充值</button>
-            &nbsp;&nbsp;
-            <button id="button1" @click="deleteCard(account.id)">删除账户</button>
-          </div>
-        </div>
+        <p v-if="accounts.length===0">您还没有账户</p>
+<!--        <div class="card" v-for="account in accounts" :key="account.id" :style="getCardColor()">-->
+<!--          <div class="cardInfo">-->
+<!--            <h3>{{account.name}}</h3>-->
+<!--            <span>银行卡号：{{account.card_id}}</span><br>-->
+<!--            <span>账户余额：{{account.amount}}</span>-->
+<!--          </div>-->
+          <el-card class="cardInfo" v-for="account in accounts" :key="account.id" style="width: 100%;height:120px;background-color: rgba(56,183,232,0.2)">
+            <template #header>
+              <div class="card-header" style="width: 100%">
+                <span>{{account.name}}</span>
+                <el-button id="button2" text @click="deposit(account)">充值</el-button>
+                <el-button id="button1" text @click="deleteCard(account)">删除账户</el-button>
+              </div>
+            </template>
+            <div style="text-align: left">
+              <span>银行卡号：{{account.card_id}}</span><br>
+              <span>账户余额：{{account.amount}}</span>
+            </div>
+          </el-card>
+<!--          <div>-->
+<!--            <button id="button2" @click="deposit(account)">充值</button>-->
+<!--            &nbsp;&nbsp;-->
+<!--            <button id="button1" @click="deleteCard(account)">删除账户</button>-->
+<!--          </div>-->
+<!--        </div>-->
       </div>
+    </div>
+    <div class="footer">
+      <p>&copy; 2023 畅游中国. All rights reserved. | 联系电话: 15566293351</p>
     </div>
   </div>
 </template>
@@ -36,6 +52,7 @@ import NavLine from "@/components/common/NavLine.vue";
 import TopLine from "@/components/common/TopLine.vue";
 import axios from "axios";
 import depositMoney from "@/views/user/deposit_money/DepositMoney.vue";
+import {ElMessage, ElMessageBox} from "element-plus";
 
 export default {
   name: "AccountManage",
@@ -46,6 +63,9 @@ export default {
     },
     user() {
       return this.$store.getters.getUser;
+    },
+    jwt(){
+      return this.$store.getters.getJwt;
     }
   },
   data(){
@@ -66,68 +86,7 @@ export default {
         'rgba(213, 176, 252, 0.45)'
 
       ],
-      accounts:[
-        {
-          "id": 1,
-          "name": "account1",
-          "card_id": "122435543434",
-          "amount": 300.00
-        },
-        {
-          "id": 2,
-          "name": "account2",
-          "card_id": "876543676876",
-          "amount": 50.00
-        },
-        {
-          "id": 3,
-          "name": "account2",
-          "card_id": "876543676876",
-          "amount": 50.00
-        },
-        {
-          "id": 4,
-          "name": "account2",
-          "card_id": "876543676876",
-          "amount": 50.00
-        },
-        {
-          "id": 5,
-          "name": "account2",
-          "card_id": "876543676876",
-          "amount": 50.00
-        },
-        {
-          "id": 6,
-          "name": "account2",
-          "card_id": "876543676876",
-          "amount": 50.00
-        },
-        {
-          "id": 7,
-          "name": "account2",
-          "card_id": "876543676876",
-          "amount": 50.00
-        },
-        {
-          "id": 8,
-          "name": "account2",
-          "card_id": "876543676876",
-          "amount": 50.00
-        },{
-          "id": 9,
-          "name": "account2",
-          "card_id": "876543676876",
-          "amount": 50.00
-        },
-        {
-          "id": 10,
-          "name": "account2",
-          "card_id": "876543676876",
-          "amount": 50.00
-        },
-
-        ]
+      accounts:[]
     }
   },
 
@@ -136,59 +95,57 @@ export default {
     if (username) {
       this.$store.commit('setUser', username);
     }
-    axios.get('{{base_url}}/accounts',
+    const jwt = localStorage.getItem('jwt');
+    if(jwt){
+      this.$store.commit('setJwt', jwt);
+    }
+    axios.get('api/accounts/',
         {
-
+          headers:{'jwt': `${this.jwt}`}
         })
-        .then(function(response)
+        .then((response)=>
         {
           this.accounts=response.data.accounts;
         })
-        .catch(function(){})
+        .catch(function(){ElMessage.error("网络异常，请稍后重试！")})
   },
 
   methods:{
     // eslint-disable-next-line no-unused-vars
-    deleteCard(accountid)
+    deleteCard(account)
     {
-      const token = localStorage.getItem('jwtToken');
-      axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-      axios({
-        "method": "DELETE",
-        "body": {
-          "mode": "raw",
-          "raw": "",
-          "options": {
-            "raw": {
-              "language": "json"
-            }
+      ElMessageBox.confirm('确定要删除该账户吗?',
+          '删除账户',
+          {
+            confirmButtonText: 'OK',
+            cancelButtonText: 'Cancel',
+            type: 'warning',
           }
-        },
-        "url": {
-          "raw": "{{base_url}}/accounts/{{accountid}}",
-          "host": [
-            "{{base_url}}"
-          ],
-          "path": [
-            "accounts",
-            "{{accountid}}"
-          ]
-        }
-      })
-        .then(function(response)
-        {
-          switch(response.data.result){
-            case 0:
-            {
-              break;
-            }
-            default:
-              alert("出现问题，请重试。");
-              break;
+      )
+          .then(()=>{
+                axios.delete(`/api/accounts/${account.id}`,{headers:{'jwt': `${this.jwt}`}})
+                    .then((response)=>
+                    {
+                      switch (response.data.result)
+                      {
+                        case 0:
+                          ElMessage({message:response.data.message,type:'success'});
+                          setTimeout("",1000);
+                          this.$router.go(0);
+                          break;
+                        default:
+                          ElMessage.error(response.data.message);
+                      }
+
+                    })
+                    .catch(function () {
+                      ElMessage.error("出现一些问题……");
+                    })
           }
-        })
-        .catch(function(){alert("网络异常，请稍后重试。");})
-    },
+          )
+          .catch(()=> {})
+    }
+    ,
     deposit(account)
     {
       this.$store.dispatch('storeAccount', account);
@@ -206,30 +163,27 @@ export default {
 
 <style scoped>
 #topline{
-  position: fixed;
-  z-index: 9999;
+  position: relative;
 }
 #nav{
-  position: fixed;
-  z-index: 9999;
+  position: relative;
 }
 
 #mainBlock{
   margin:0 auto;
   background-color: rgba(255, 255, 255, 0.8);
   top:0px;
-  width:1400px;
-  height: 100vh;
+  width:100%;
   text-align: center;
   z-index: 10;
 }
 
 #introduceWord{
-  position: fixed;
-  width:1400px;
+  position: relative;
+  width:100%;
   align-items:center;
   display: block;
-  top:200px;
+  top:50px;
 }
 
 #introduceWord p{
@@ -239,8 +193,8 @@ export default {
 }
 
 #secondFloor{
-  position: fixed;
-  top:300px;
+  position: relative;
+  top:0;
   padding: 0;
   margin: 0;
   display: flex;
@@ -266,12 +220,12 @@ export default {
 }
 
 .card-grid {
-  position: absolute;
-  top:0px;
+  position: relative;
+  top:20px;
   left:750px;
   width:600px;
   display: grid;
-  grid-template-rows: repeat(3, 1fr); /* 三列网格 */
+  grid-template-rows: repeat(7, 1fr); /* 三列网格 */
   grid-gap: 3px; /* 网格之间的间距 */
   height: 500px;
   padding: 10px;
@@ -282,16 +236,18 @@ export default {
 .card {
   background-color: #fff;
   border: 1px solid #ccc;
-  padding: 20px;
-  text-align: center;
+  padding: 15px;
+  text-align: left;
   font-size: 16px;
-  height: 50px;
+  height: 100px;
   display: flex;
+  border-radius: 10px;
 }
 
 .cardInfo{
   width: 450px;
 }
+
 
 #button1{
   position: absolute;
@@ -316,5 +272,48 @@ export default {
   border-radius: 4px;
   font-size: 16px;
   cursor: pointer;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.text {
+  font-size: 14px;
+}
+
+.item {
+  margin-bottom: 18px;
+}
+
+.box-card {
+  width: 450px;
+}
+
+.footer p {
+  margin: 0;
+  font-size: 14px;
+}
+
+.footer a {
+  color: #fff;
+  text-decoration: none;
+  margin-left: 10px;
+}
+
+.footer {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 80px; /* 底边栏的高度 */
+  background-color: #333;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 </style>

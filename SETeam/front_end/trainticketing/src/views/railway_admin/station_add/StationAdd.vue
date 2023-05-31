@@ -1,6 +1,6 @@
 <template>
     <div id="topline"><TopLine/></div>
-    <div id="nav"><railway_Navline @turnToTrainAdd="turnToTrainAdd" @turnTrainDelete="turnTrainDelete" @turnTrainChange="turnTrainChange" @logout="logout"/></div>
+    <div id="nav"><railway_Navline @turnToWorkspace="turnToWorkspace" @turnToTrainAdd="turnToTrainAdd" @turnTrainDelete="turnTrainDelete" @turnTrainChange="turnTrainChange" @logout="logout"/></div>
     <div class="add-station">
         <h1>添加站点</h1>
         <form @submit.prevent="submitForm">
@@ -10,7 +10,8 @@
             <label for="name">站点名：</label>
             <input type="text" id="name" v-model="station.name" required>
 
-            <button type="submit">添加站点</button>
+            <input type="button" value="添加站点" @click="addStation" style="background-color: #4CAF50; color: white; padding: 10px 20px; border: none; border-radius: 4px; font-size: 16px; cursor: pointer;"/>&nbsp;&nbsp;
+            <div v-if="errorMessage" class="error-message">{{ errorMessage }}</div>
         </form>
     </div>
 </template>
@@ -18,9 +19,18 @@
 <script>
 import TopLine from "@/components/common/TopLine.vue";
 import railway_Navline from "@/components/common/railway_Navline.vue";
+import axios from "axios";
 
 export default {
     components: {railway_Navline, TopLine},
+    computed: {
+        user() {
+            return this.$store.getters.getUser;
+        },
+        jwt(){
+            return this.$store.getters.getJwt;
+        }
+    },
     data() {
         return {
             station: {
@@ -29,19 +39,48 @@ export default {
             }
         };
     },
+    mounted() {
+        // 从本地存储中恢复用户名到 Vuex 的 state 中
+        const username = localStorage.getItem('username');
+        if (username) {
+            this.$store.commit('setUser', username);
+        }
+        const jwt = localStorage.getItem('jwt');
+        if(jwt){
+            this.$store.commit('setJwt', jwt);
+        }
+    },
     methods: {
-        submitForm() {
-            /*const requestBody = {
-                station_no: this.station.stationNo,
-                name: this.station.name
-            };*/
-
-            // Perform API request to add the station using the requestBody object
-            // You can use axios or any other library for making HTTP requests
-
-            // Reset form fields after successful submission
-            this.station.stationNo = '';
-            this.station.name = '';
+        addStation() {
+            if(this.user==="null"){
+                alert("登录已过期，请重新登录");
+                this.$store.dispatch('logout');
+                localStorage.setItem('username', null);
+                this.$router.push('/');
+                return;
+            }
+            if(this.station.stationNo==='') {
+                alert("请填写站点编号");
+            }
+            if(this.station.name==='') {
+                alert("请填写站点名");
+            }
+            axios.post('api/schedules/stations',
+                {
+                    "station_no":this.station.stationNo,
+                    "name": this.station.name
+                },{headers:{'jwt': `${this.jwt}`}})
+                .then(function(response){
+                    if(response.data.result!==0) {
+                        alert(response.data.message);
+                    }
+                    else {
+                        alert("添加成功！");
+                    }
+                })
+                .catch(function(){
+                    alert("网络错误，请稍后重试。");
+                })
         }
     }
 }
