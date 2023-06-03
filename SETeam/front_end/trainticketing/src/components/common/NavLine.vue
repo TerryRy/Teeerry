@@ -2,10 +2,11 @@
   <nav>
     <ul>
       <li id="leftblock"><a href="/">首页</a></li>
-
+      <li><a @click="turnto('/messagelist')">通知公告</a></li>
       <li><a @click="turnto('/orderlist')">订单管理</a></li>
       <li><a @click="turnto('/accountmanage')">账户管理</a></li>
       <li id="rightblock"><a @click="turnto('/personalcenter')">联系人管理</a></li>
+
 <!--      <li @click="dialogTableVisible = true">登录</li>-->
 <!--      <li id="rightblock"><a @click="logout">退出登录</a></li>-->
     </ul>

@@ -31,6 +31,7 @@ import TicketPay from "@/views/user/ticket_buy/TicketPay.vue";
 import UserAdd from "@/views/system_admin/user_add/userAdd.vue";
 import UserChange from "@/views/system_admin/user_change/userChange.vue";
 import UserList from "@/views/system_admin/user_list/userList.vue";
+import MessageList from "@/views/user/message_list/MessageList.vue";
 
 
 // ...
@@ -60,6 +61,7 @@ const router = createRouter({
         { path: '/useradd',component:UserAdd},
         { path: '/userchange',component:UserChange},
         { path: '/userlist',component:UserList},
+        { path: '/messagelist',component:MessageList},
         { path: '/:pathMatch(.*)*',redirect:'/'}
         // ... 其他路由规则
     ]

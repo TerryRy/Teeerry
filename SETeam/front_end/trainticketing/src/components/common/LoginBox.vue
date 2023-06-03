@@ -72,6 +72,34 @@ export default {
     }
   },
   methods:{
+
+    is_common_user(groups)
+    {
+      let i;
+      for(i=0;i<groups.length;i++)
+      {
+        if(groups[i].name==="Common User") return true;
+      }
+      return false;
+    },
+    is_rail_admin(groups)
+    {
+      let i;
+      for(i=0;i<groups.length;i++)
+      {
+        if(groups[i].name==="Train Admin") return true;
+      }
+      return false;
+    },
+    is_sys_admin(groups)
+    {
+      let i;
+      for(i=0;i<groups.length;i++)
+      {
+        if(groups[i].name==="System Admin") return true;
+      }
+      return false;
+    },
     //设置登录模式
     toggleForm(mode){
       this.loginMode=mode;
@@ -167,7 +195,22 @@ export default {
             this.$store.dispatch('login', user, jwt);
             localStorage.setItem('username', user);
             localStorage.setItem('jwt', jwt);
-            this.$emit('logined');
+            axios.get('/api/users/me',{headers:{'jwt': `${jwt}`}})
+                .then((response)=>
+                {
+                  if(this.is_common_user(response.data.groups))
+                  {
+                    this.$emit('logined');
+                  }
+                  else if(this.is_sys_admin(response.data.groups))
+                  {
+                    this.$router.push('/userlist');
+                  }
+                  else if(this.is_rail_admin(response.data.groups))
+                  {
+                    this.$router.push('/workspace');
+                  }
+                })
           })
           .catch(function(){ElMessage.error("网络异常，请稍后重试。");})
     },
@@ -201,8 +244,22 @@ export default {
             this.$store.dispatch('login', user, jwt);
             localStorage.setItem('username', user);
             localStorage.setItem('jwt', jwt);
-            this.$emit('logined');
-            this.$router.push('/userlist');
+            axios.get('/api/users/me',{headers:{'jwt': `${jwt}`}})
+                .then((response)=>
+                {
+                  if(this.is_sys_admin(response.data.groups))
+                  {
+                    this.$router.push('/userlist');
+                    return;
+                  }
+                  else if(this.is_rail_admin(response.data.groups))
+                  {
+                    this.$router.push('/workspace');
+                    return;
+                  }
+                  ElMessage.warning("普通用户无权访问管理员界面！");
+                })
+
           })
           .catch(function(){ElMessage.error("网络异常，请稍后重试。");})
     },
@@ -221,8 +278,21 @@ export default {
             this.$store.dispatch('login', user, jwt);
             localStorage.setItem('username', user);
             localStorage.setItem('jwt', jwt);
-            this.$emit('logined');
-            this.$router.push('/workspace');
+            axios.get('/api/users/me',{headers:{'jwt': `${jwt}`}})
+                .then((response)=>
+                {
+                  if(this.is_rail_admin(response.data.groups))
+                  {
+                    this.$router.push('/workspace');
+                    return;
+                  }
+                  else if(this.is_sys_admin(response.data.groups))
+                  {
+                    this.$router.push('/userlist');
+                    return;
+                  }
+                  ElMessage.warning("普通用户无权访问管理员界面！");
+                })
           })
           .catch(function(){ElMessage.error("网络异常，请稍后重试。");})
     },
