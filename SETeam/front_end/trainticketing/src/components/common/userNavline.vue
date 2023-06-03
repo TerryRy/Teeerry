@@ -2,8 +2,8 @@
     <nav>
 			<ul>
         <li id="leftblock"><a href="/useradd" @click="turnToUserAdd">新增用户</a></li>
-        <li><a href="/userlist" @click="turnToUserList">列出所有用户</a></li>
-        <li id="rightblock"><a href="/userchange" @click="turnToUserChange">修改用户信息</a></li>
+        <li id="rightblock"><a href="/userlist" @click="turnToUserList">用户管理</a></li>
+<!--        <li id="rightblock"><a href="/userchange" @click="turnToUserChange">修改用户信息</a></li>-->
       </ul>
     </nav>
   </template>
@@ -31,7 +31,6 @@
       color: #fff;
       font-size: 18px;
       font-weight: bold;
-      position:fixed;
       top:80px;
       width: 100%;
     }
@@ -45,7 +44,7 @@
     }
   
     nav li {
-      width:25%;
+      width:60%;
       margin: 0 10px;
     }
   

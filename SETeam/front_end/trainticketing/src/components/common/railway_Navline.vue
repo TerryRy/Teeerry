@@ -48,7 +48,6 @@ nav {
     color: #fff;
     font-size: 18px;
     font-weight: bold;
-    position:fixed;
     top:80px;
     width: 100%;
 }

@@ -15,6 +15,11 @@ const store = createStore({
             seatType:null,
             ticketID:null,
             schedule_id:null,
+            userId: null,
+            userName: null,
+            userPassword: null,
+            userEmail: null,
+            userRole: null
         };
     },
     mutations: {
@@ -51,6 +56,21 @@ const store = createStore({
         },
         setSchedule_id(state,schedule_id){
             state.schedule_id=schedule_id;
+        },
+        setUserId(state, userId) {
+            state.userId=userId;
+        },
+        setUserName(state, userName) {
+            state.userName=userName;
+        },
+        setUserPassword(state, userPassword) {
+            state.userPassword=userPassword;
+        },
+        setUserEmail(state, userEmail) {
+            state.userEmail=userEmail;
+        },
+        setUserRole(state, userRole) {
+            state.userRole=userRole;
         }
     },
     actions: {
@@ -123,6 +143,21 @@ const store = createStore({
         },
         getSchedule_id(state){
             return state.schedule_id;
+        },
+        getUserId(state){
+            return state.userId;
+        },
+        getUserName(state){
+            return state.userName;
+        },
+        getUserPassword(state) {
+            return state.userPassword;
+        },
+        getUserEmail(state) {
+            return state.userEmail;
+        },
+        getUserRole(state) {
+            return state.userRole;
         }
     }
 });

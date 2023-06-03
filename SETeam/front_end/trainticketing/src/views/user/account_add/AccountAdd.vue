@@ -14,9 +14,9 @@
         <div v-if="errorMessage" class="error-message">{{ errorMessage }}</div>
       </form>
     </div>
-    <div class="footer">
-      <p>&copy; 2023 畅游中国. All rights reserved. | 联系电话: 15566293351</p>
-    </div>
+  </div>
+  <div class="footer">
+    <p>&copy; 2023 畅游中国. All rights reserved. | 联系电话: 15566293351</p>
   </div>
 </template>
 
@@ -109,6 +109,7 @@ export default {
 }
 #mainBlock{
   margin:0 auto;
+  height: calc(100vh - 150px);
   background-color: rgba(255, 255, 255, 0.8);;
   width:100%;
   text-align: center;
@@ -152,7 +153,6 @@ export default {
 }
 
 .footer {
-  position: absolute;
   left: 0;
   bottom: 0;
   width: 100%;

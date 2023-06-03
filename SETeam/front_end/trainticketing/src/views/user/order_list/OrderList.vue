@@ -18,13 +18,15 @@
           <div class="billInfo">
             <p class="id">{{bill.id}}</p>
             <div class="seatInfo">
-              <span>车次：{{bill.schedule.schedule_no}}&nbsp;&nbsp;
+              <span v-if="bill.schedule">
+                车次：{{bill.schedule.schedule_no}}&nbsp;&nbsp;
                 车厢号：{{bill.carriage.name}}&nbsp;&nbsp;
                 座位号：{{bill.seat_no}}&nbsp;&nbsp;<br>
 
                 出发时间：{{bill.schedule.departure_time}}&nbsp;&nbsp;
                 票价：{{bill.amount}}元
-              </span><br>
+              </span>
+              <span v-else>该车次已取消</span><br>
               <span>
 <!--                {{bill.ori_station.station_no}}&#45;&#45;&#45;&#45;&ndash;&gt;{{bill.dst_station}}-->
 <!--                出发车站：{{bill.schedule.departure_station.name}}&nbsp;&nbsp;-->
@@ -32,15 +34,15 @@
               </span>
             </div>
           </div>
-            <button id="button3" v-if="!bill.is_paid" @click="pay(bill)">支付</button>
-            <button id="button2" @click="deletebill(bill)" v-if="checktime(bill.schedule.departure_time)||(!bill.is_paid)">删除</button>
+            <button id="button3" v-if="(bill.schedule)&&(!bill.is_paid)" @click="pay(bill)">支付</button>
+            <button id="button2" @click="deletebill(bill)" v-if="(bill.schedule)&&(checktime(bill.schedule.departure_time)||(!bill.is_paid))">删除</button>
             <button id="button1" @click="showdetails(bill)">详情</button>
         </div>
       </div>
     </div>
-    <div class="footer">
-      <p>&copy; 2023 畅游中国. All rights reserved. | 联系电话: 15566293351</p>
-    </div>
+  </div>
+  <div class="footer">
+    <p>&copy; 2023 畅游中国. All rights reserved. | 联系电话: 15566293351</p>
   </div>
 </template>
 
@@ -153,6 +155,7 @@ export default {
   width:1400px;
   text-align: center;
   z-index: 10;
+  height: calc(100vh - 150px);
 }
 
 #introduceWord{
@@ -280,7 +283,6 @@ export default {
 }
 
 .footer {
-  position: absolute;
   bottom: 0;
   left: 0;
   width: 100%;

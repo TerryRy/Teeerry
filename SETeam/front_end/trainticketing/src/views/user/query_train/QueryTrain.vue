@@ -1,4 +1,5 @@
 <template>
+  <el-backtop :right="100" :bottom="100" />
   <div id="topline"><TopLine/></div>
   <div id="nav"><NavLine @turnToBillsManage="turnToBillsManage" @turnToAccountManage="turnToAccountManage" @logout="logout"/></div>
   <div id="mainBlock">
@@ -8,9 +9,9 @@
       <div id="secondFloor">
 <!--        <p v-if="schedules.length===0">很抱歉，没有可以改签的车次</p>-->
         <div class="schedule-list" style="margin: 0 auto; text-align: center;">
-          <el-table :resize-sensor="false" :data="schedules" style="width: 100%" stripe="true" border="true">
+          <el-table :resize-sensor="false" :data="schedules" style="width: 100%" :stripe="true" :border="true" :fit="false">
             <el-table-column type="index"></el-table-column>
-            <el-table-column label="车次" width="100px">
+            <el-table-column prop="schedule_no" label="车次" width="100px">
               <template v-slot="{ row }">
                 {{row.schedule_no}}
               </template>
@@ -22,7 +23,7 @@
                 </div>
               </template>
             </el-table-column>
-            <el-table-column label="出发时间" width="200px">
+            <el-table-column prop="departure_time" label="出发时间" width="200px">
               <template v-slot="{ row }">
                 {{row.departure_time}}
               </template>
@@ -33,6 +34,26 @@
               </template>
             </el-table-column>
           </el-table>
+<!--          <el-table :data="schedules" style="width: 100%">-->
+<!--            <el-table-column prop="schedule_no" label="车次编号"></el-table-column>-->
+<!--            <el-table-column prop="departure_time" label="出发时间"></el-table-column>-->
+<!--            <el-table-column label="站点信息">-->
+<!--              <template v-slot="{ row }">-->
+<!--                <ul>-->
+<!--                  <li v-for="station in row.stations" :key="station.station.id">-->
+<!--                    <span>{{ station.station.station_no }}</span>-->
+<!--                    <span>{{ station.station.name }}</span>-->
+<!--                  </li>-->
+<!--                </ul>-->
+<!--              </template>-->
+<!--            </el-table-column>-->
+<!--            <el-table-column label="操作">-->
+<!--              <template v-slot="{ row }">-->
+<!--                <el-button @click="deleteTrain(row.id)" type="text" class="red">删除车次</el-button>-->
+<!--                <el-button @click="changeTrain(row.id)" type="text" class="green">调整车次</el-button>-->
+<!--              </template>-->
+<!--            </el-table-column>-->
+<!--          </el-table>-->
         </div>
 <!--          <div class="schedule_grid">-->
 <!--              <div class="schedule" v-for="schedule in schedules" :key="schedule.id">-->
@@ -95,9 +116,10 @@
 <!--              </div>-->
 <!--          </div>-->
       </div>
-    <div class="footer">
-      <p>&copy; 2023 畅游中国. All rights reserved. | 联系电话: 15566293351</p>
-    </div>
+
+  </div>
+  <div class="footer">
+  <p>&copy; 2023 畅游中国. All rights reserved. | 联系电话: 15566293351</p>
   </div>
 </template>
 
@@ -232,6 +254,7 @@ export default {
   background-color: rgba(255, 255, 255, 0.8);;
   width:100%;
   text-align: center;
+  height: calc(100vh - 150px);
 }
 
 #introduceWord{
@@ -342,7 +365,6 @@ export default {
 }
 
 .footer {
-  position: absolute;
   left: 0;
   bottom: 0;
   width: 100%;
@@ -353,4 +375,5 @@ export default {
   align-items: center;
   justify-content: center;
 }
+
 </style>

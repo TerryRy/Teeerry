@@ -12,43 +12,43 @@
           <th class="vertical-header">乘车人姓名</th>
           <td>{{username}}</td>
         </tr>
-        <tr>
+        <tr v-if="bill.schedule">
           <th class="vertical-header">乘坐车次</th>
           <td>{{bill.schedule.schedule_no}}</td>
         </tr>
-        <tr>
+        <tr v-if="bill.schedule">
           <th class="vertical-header">车厢号</th>
           <td>{{bill.carriage.name}}</td>
         </tr>
-        <tr>
+        <tr v-if="bill.schedule">
           <th class="vertical-header">座位号</th>
           <td>{{bill.seat_no}}</td>
         </tr>
-        <tr>
+        <tr v-if="bill.schedule">
           <th class="vertical-header">出发时间</th>
           <td>{{bill.schedule.departure_time}}</td>
         </tr>
-        <tr>
+        <tr v-if="bill.ori_station">
           <th class="vertical-header">出发地</th>
           <td>{{bill.ori_station.name}}</td>
         </tr>
-        <tr>
+        <tr v-if="bill.dst_station">
           <th class="vertical-header">目的地</th>
           <td>{{bill.dst_station.name}}</td>
         </tr>
         </tbody>
       </table>
       <div id="buttons">
-        <button style="background-color: #f6bf0b; color: white; padding: 10px 20px; border: none; border-radius: 4px; font-size: 16px; cursor: pointer;" @click="returnticket(bill)"  v-if="(checktime(bill.schedule.departure_time)&&(bill.is_paid))">退票</button>
+        <button style="background-color: #f6bf0b; color: white; padding: 10px 20px; border: none; border-radius: 4px; font-size: 16px; cursor: pointer;" @click="returnticket(bill)"  v-if="((!bill.schedule)||checktime(bill.schedule.departure_time)&&(bill.is_paid))">退票</button>
         &nbsp;
-        <button @click="changeticket(bill)" style="background-color: #24c6e3; color: white; padding: 10px 20px; border: none; border-radius: 4px; font-size: 16px; cursor: pointer;"  v-if="(checktime(bill.schedule.departure_time)&&(bill.is_paid))">改签</button>
+        <button @click="changeticket(bill)" style="background-color: #24c6e3; color: white; padding: 10px 20px; border: none; border-radius: 4px; font-size: 16px; cursor: pointer;"  v-if="((!bill.schedule)||checktime(bill.schedule.departure_time)&&(bill.is_paid))">改签</button>
         &nbsp;
         <a href="/orderlist"><button style="background-color: rgba(49,79,222,0.21); color: white; padding: 10px 20px; border: none; border-radius: 4px; font-size: 16px; cursor: pointer;">返回</button></a>
       </div>
     </div>
-    <div class="footer">
-      <p>&copy; 2023 畅游中国. All rights reserved. | 联系电话: 15566293351</p>
-    </div>
+  </div>
+  <div class="footer">
+    <p>&copy; 2023 畅游中国. All rights reserved. | 联系电话: 15566293351</p>
   </div>
 </template>
 
@@ -133,6 +133,7 @@ export default {
   width:100%;
   text-align: center;
   z-index: 10;
+  height: calc(100vh - 150px);
 }
 
 #introduceWord{
@@ -200,7 +201,6 @@ td{
 }
 
 .footer {
-  position: absolute;
   left: 0;
   bottom: 0;
   width: 100%;

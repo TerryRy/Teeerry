@@ -61,10 +61,8 @@
                         <th class="vertical-header">价格</th>
                         <td>
                             <div v-for="carriage in schedule.carriages" :key="carriage.carriage.id">
-                                <div v-if="carriage.carriage.id==seatType">
-                                    {{carriage.price}}
+                                {{price}}
                                 </div>
-                            </div>
                             </td>
                     </tr>
                     </tbody>
@@ -75,10 +73,10 @@
                 </div>
             </form>
         </div>
-      <div class="footer">
-        <p>&copy; 2023 畅游中国. All rights reserved. | 联系电话: 15566293351</p>
-      </div>
     </div>
+  <div class="footer">
+    <p>&copy; 2023 畅游中国. All rights reserved. | 联系电话: 15566293351</p>
+  </div>
 </template>
 
 <script>
@@ -95,8 +93,8 @@ export default {
         return{
             contacts:[],
             stations:[],
-            contactID:null
-
+            contactID:null,
+            price:null
         }
     },
     mounted() {
@@ -122,6 +120,32 @@ export default {
                 this.contacts=response.data.contacts;
             })
             .catch(function(){ElMessage.error("网络异常，请稍后重试！")})
+        axios.post('/api/tickets/',
+            {
+                "schedule_id": this.schedule.id,
+                "contact_id": 1,
+                "carriage_id": this.seatType,
+                "ori_station_id": this.departure,
+                "dst_station_id": this.destination
+            },
+            {
+                params:{
+                    "only_get_price":true
+                },
+                headers:{'jwt':`${this.jwt}`}
+            })
+            .then((response)=>
+            {
+                if(response.data.result===0)
+                {
+                    this.price=response.data.price;
+                }
+                else{
+                    ElMessage({message:response.data.message,type:'error'});
+                }
+
+            })
+            .catch(function(){ElMessage.error("购买失败，请重试！")});
     },
     computed:{
         departure() {
@@ -173,7 +197,7 @@ export default {
                     }
 
                 })
-                .catch(function(){ElMessage.error("购买失败，请重试！")});
+                .catch(function(){ElMessage.error("网络错误，请重试！")});
 
         },
         turnToQueryTrain()
@@ -200,6 +224,7 @@ export default {
     width:100%;
     text-align: center;
     z-index: 10;
+  height: calc(100vh - 150px);
 }
 
 #introduceWord{
@@ -279,7 +304,6 @@ tr {
 }
 
 .footer {
-  position: absolute;
   left: 0;
   bottom: 0;
   width: 100%;

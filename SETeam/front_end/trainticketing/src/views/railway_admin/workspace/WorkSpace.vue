@@ -26,6 +26,9 @@
             </el-table>
         </div>
     </div>
+  <div class="footer">
+    <p>&copy; 2023 畅游中国. All rights reserved. | 联系电话: 15566293351</p>
+  </div>
 </template>
 
 <script>
@@ -96,6 +99,7 @@ export default {
 
 <style scoped>
 .container {
+  height: calc(100vh - 150px);
     max-width: 800px;
     margin: 0 auto;
     padding: 50px;
@@ -135,5 +139,28 @@ export default {
 
 .carriages span {
     margin-right: 10px;
+}
+
+.footer p {
+  margin: 0;
+  font-size: 14px;
+}
+
+.footer a {
+  color: #fff;
+  text-decoration: none;
+  margin-left: 10px;
+}
+
+.footer {
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 80px; /* 底边栏的高度 */
+  background-color: #333;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 </style>

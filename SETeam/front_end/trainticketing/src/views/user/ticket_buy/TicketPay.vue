@@ -69,9 +69,9 @@
         <a href="/orderlist"><button style="background-color: rgb(255,255,255); color: rgb(0,0,0); padding: 10px 20px; border: none; border-radius: 4px; font-size: 16px; cursor: pointer;">返回</button></a>
       </div>
     </div>
-    <div class="footer">
-      <p>&copy; 2023 畅游中国. All rights reserved. | 联系电话: 15566293351</p>
-    </div>
+  </div>
+  <div class="footer">
+    <p>&copy; 2023 畅游中国. All rights reserved. | 联系电话: 15566293351</p>
   </div>
 </template>
 
@@ -177,6 +177,7 @@ export default {
   width:100%;
   text-align: center;
   z-index: 10;
+  height: calc(100vh - 150px);
 }
 
 #introduceWord{
@@ -226,7 +227,6 @@ export default {
 }
 
 .footer {
-  position: absolute;
   left: 0;
   bottom: 0;
   width: 100%;

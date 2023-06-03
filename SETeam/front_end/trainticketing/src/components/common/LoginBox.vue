@@ -202,7 +202,7 @@ export default {
             localStorage.setItem('username', user);
             localStorage.setItem('jwt', jwt);
             this.$emit('logined');
-            this.$router.push('/userinfomanage');
+            this.$router.push('/userlist');
           })
           .catch(function(){ElMessage.error("网络异常，请稍后重试。");})
     },

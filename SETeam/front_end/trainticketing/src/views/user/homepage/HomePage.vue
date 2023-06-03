@@ -97,12 +97,11 @@
           </el-col>
         </el-row>
       </div>
-      <div class="footer">
-        <p>&copy; 2023 畅游中国. All rights reserved. | 联系电话: 15566293351</p>
-      </div>
 
     </div>
-
+  <div class="footer">
+    <p>&copy; 2023 畅游中国. All rights reserved. | 联系电话: 15566293351</p>
+  </div>
 </template>
 
 <script>
