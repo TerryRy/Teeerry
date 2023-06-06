@@ -65,8 +65,8 @@
         </el-select>
       </div>
       <div style="position: relative;margin: 0 auto;top:100px">
-        <button @click="returnTicket(ticket_id)" style="background-color: #4CAF50; color: white; padding: 10px 20px; border: none; border-radius: 4px; font-size: 16px; cursor: pointer;">退款</button>&nbsp;&nbsp;&nbsp;&nbsp;
-        <a href="/orderlist"><button style="background-color: rgb(255,255,255); color: rgb(0,0,0); padding: 10px 20px; border: none; border-radius: 4px; font-size: 16px; cursor: pointer;">返回</button></a>
+        <button @click="returnTicket(ticket_id)" style="background-color: #4CAF50; color: white; padding: 10px 20px; border: none; border-radius: 4px; font-size: 16px; cursor: pointer;">退款</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      <a href="/orderlist"><button style="background-color: rgb(255,255,255); color: rgb(0,0,0); padding: 10px 20px; border: none; border-radius: 4px; font-size: 16px; cursor: pointer;">返回</button></a>
       </div>
     </div>
   </div>
@@ -82,7 +82,7 @@ import axios from "axios";
 import {ElMessage} from "element-plus";
 
 export default {
-  name: "TicketPay",
+  name: "DeleteTicket",
   components: {TopLine, NavLine},
   computed: {
     jwt(){
@@ -137,32 +137,33 @@ export default {
         .catch(function(){alert("网络异常，请稍后重试！")})
   },
 
-  methods:{
-    // enough(amount)
-    // {
-    //   return amount>=this.ticketAmount;
-    // },
-    // eslint-disable-next-line no-unused-vars
-    returnTicket(id)
-    {
-      axios.patch(`/api/schedule/tickets/${id}`,{"account_id":this.account},{headers:{'jwt': `${this.jwt}`}})
-          .then((response)=>
-          {
-              if(response.data.result===0)
-              {
-                ElMessage({message: response.data.message,type:'success',zIndex:'20000'});
-                this.$router.push('/orderlist');
-              }
-              else
-              {
-                ElMessage.error({message:response.data.message,zIndex:20000});
-              }
-          })
-          .catch(function (){ElMessage.error({message:"出现一些问题……",zIndex:20000});})
-    }
+  methods:
+      {
+        returnTicket(id)
+        {
+            axios.delete(
+                `/api/tickets/${id}`,
+                {
+                    data:{
+                        "account_id": this.account,
+                    },
+                    headers: {'jwt': `${this.jwt}`}
+                })
+                .then((response) => {
+                    if (response.data.result === 0) {
+                        ElMessage({message: response.data.message, type: 'success', zIndex: '20000'});
+                        this.$router.push('/orderlist');
+                    } else {
+                        ElMessage.error({message: response.data.message, zIndex: 20000});
+                    }
+                })
+                .catch(function () {
+                    ElMessage.error({message: "出现一些问题……", zIndex: 20000});
+                })
+        }
 
+    }
   }
-}
 </script>
 
 <style scoped>
