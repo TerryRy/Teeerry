@@ -1,0 +1,8 @@
+# This file may be used to create an environment using:
+# $ conda create --name <env> --file <this file>
+# platform: win-64
+django==4.2
+djangorestframework==3.14.0
+pyjwt==2.6.0
+pymysql==1.0.3
+cryptography
