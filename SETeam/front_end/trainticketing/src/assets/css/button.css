@@ -1,0 +1,25 @@
+.el-button--primary {
+    --el-button-bg-color: #409eff;
+    --el-button-hover-bg-color: #409eff;
+}
+.el-button--primary:hover {
+    --el-button-hover-bg-color: #79bbff;
+}
+.el-button--warning.is-plain {
+    --el-button-bg-color: #fdf6ec;
+    --el-button-hover-text-color: #e6a23c;
+    --el-button-hover-bg-color: #fdf6ec;
+}
+.el-button--warning.is-plain:hover {
+    --el-button-hover-text-color: #fff;
+    --el-button-hover-bg-color: #e6a23c;
+}
+.el-button--danger.is-plain {
+    --el-button-bg-color: #fef0f0;
+    --el-button-hover-text-color: #f56c6c;
+    --el-button-hover-bg-color: #fef0f0;
+}
+.el-button--danger.is-plain:hover {
+    --el-button-hover-text-color: #fff;
+    --el-button-hover-bg-color: #f56c6c;
+}
